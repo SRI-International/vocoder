@@ -20,4 +20,8 @@ or removed as implementation research continues.
     * `arial.ttf` : Arial font loaded for text-rendering
     * `main.cpp` : Audio recording program source code.
     * `makefile` : Simple, single-source makefile for compilation. Type `make` in the terminal to compile.
+* `sfml_record_win` : Recording software solution via SFML (made for Windows) 
 * `samples/` : Audio samples at various compression levels.
+    * `compress_samples` : Simple shell script to compress input `.ogg` file into different compression
+                           levels. Leverages `ffmpeg` and `opusenc` under the hood.
+* `sfml_voip` : Borrowed code to demonstrate simple VoIP capabilities on SFML (Linux only).

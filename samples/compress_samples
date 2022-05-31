@@ -1,3 +1,65 @@
 #!/bin/bash
 
+###############################################################################
+# Program     : compress_samples
+# Author      : Matt Oyales
+# Date        : 31 May 2022
+# Description : Given an input .ogg file, compress the file into various levels
+#               of compression using opus-tools. The resulting files can then be
+#               played to assess subjective speech quality.
+###############################################################################
+
+usage() {
+cat << EOF
+Usage: $(basename $0) <input file>
+
+<input file>: Must be a .ogg audio file.
+
+Description:
+Given an input .ogg file, compress the file into various levels
+of compression using opus-tools. The resulting files can then be
+played to assess subjective speech quality.
+EOF
+}
+
+compress() {
+echo "-------------------------------------------------------"
+echo "Compressing $1 to ($3 kbit/s, $4ms frames)"
+ffmpeg -loglevel quiet -i $1 -f wav - | opusenc --quiet --bitrate $3 --framesize $4 - "$2"_"$3"b"$4"m.opus
+echo "Done."
+echo "-------------------------------------------------------"    
+}
+
+if [ "$#" -ne 1 ]; then
+    usage
+    exit 1
+fi
+
+FILE=$1
+
+if [[ ! "$FILE" == *.ogg ]]; then
+    echo "Error: Input file is not a .ogg"
+    usage
+    exit 1
+fi
+
+y=${FILE%.ogg}
+NAME=${y##*/}
+
+echo "-------------------------------------------------------"
+echo "Compressing $FILE to G.729 spec (8 kbit/s, 10ms frames)"
+ffmpeg -loglevel quiet -i $FILE -f wav - | opusenc --bitrate 8 --framesize 10 - "$NAME"_g729.opus
+echo "Done."
+echo "-------------------------------------------------------"
+
+# Other sample compressions at different bitrates and frame sizes.
+compress $FILE $NAME 16 10
+compress $FILE $NAME 32 10
+compress $FILE $NAME  8 20
+compress $FILE $NAME 16 20
+compress $FILE $NAME  6  5
+
 exit 0
+
+# https://askubuntu.com/questions/1025532/initaudi-cannot-open-oss-audio-device-dev-dsp
+# https://www.reddit.com/r/linuxquestions/comments/5aprnv/opus_files_via_command_line/ 
