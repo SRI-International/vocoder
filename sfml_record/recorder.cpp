@@ -34,7 +34,7 @@ int main()
     sf::Text text;
     text.setFont(font);
     text.setString
-        ("Press 'R' to record.\nPress 'S' to stop and save recording.\nPress 'P' to playback recent recording.\nPress 'Q' to quit.");
+        ("Press 'R' to record.\nPress 'S' to stop and save recording.\nPress 'P' to playback recent recording.\nPress 'Q' to quit (WARNING: Save before quitting!)");
     text.setCharacterSize(24);
     text.setFillColor(sf::Color::White);
 

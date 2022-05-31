@@ -9,7 +9,8 @@ the SFML library, audio samples, a VoIP example, and a Python script to download
 YouTube.
 
 I sectioned off particular components of functionality into their own directories. The goal is to develop
-a solution that will link the functionality into a single program for the project
+a solution that will link the functionality into a single program for the project to run. Sections may be added
+or removed as implementation research continues.
 
 ## Contents of Repo
 * `py_downloader/` : YouTube audio downloader script in Python
