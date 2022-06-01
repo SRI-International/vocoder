@@ -70,6 +70,11 @@ int main()
                 else if (Event.key.code == sf::Keyboard::P)
                 {
                     std::cout << "Playing back your recording..." << std::endl;
+                    if (buffer.getDuration() == sf::seconds(0.0f))
+                    {
+                        std::cerr << "Warning: No sound has been recorded yet" << std::endl;
+                        continue;
+                    }
                     sound.setBuffer(buffer);
                     sound.play();
                     std::cout << "Playback done." << std::endl;
