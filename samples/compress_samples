@@ -35,14 +35,18 @@ echo "-------------------------------------------------------"
 #     exit 1
 # fi
 
+echo "Clearing previous samples..."
+rm *.opus *.ogg 2>/dev/null
+
 if ./recorder; then
     echo "Successfully collected sample! Processing now."
 else
-    echo "Recording process failed!"
+    echo "Recording process failed."
     exit 1
 fi
 
-FILE="output.ogg"
+FILE=$(find . -name *.ogg)
+echo $FILE
 
 if [[ ! "$FILE" == *.ogg ]]; then
     echo "Error: Input file is not a .ogg"
@@ -65,6 +69,7 @@ compress $FILE $NAME 32 10
 compress $FILE $NAME  8 20
 compress $FILE $NAME 16 20
 compress $FILE $NAME  6  5
+compress $FILE $NAME  6 10
 
 exit 0
 

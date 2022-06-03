@@ -60,9 +60,23 @@ int main()
                 // Stopping the recording 
                 else if (Event.key.code == sf::Keyboard::S)
                 {
-                    std::string filename = "output.ogg";
                     std::cout << "Recording stopped." << std::endl;
                     recorder.stop();
+
+                    std::string filename;
+                    std::cout << "Provide a name for this file: ";
+                    getline(std::cin, filename);
+
+                    if (filename.empty()) 
+                    {
+                        std::cerr << "Warning: No file name provided. Using default of 'output.ogg'." << std::endl;
+                        filename = "output.ogg";
+                    } 
+                    else 
+                    {
+                        filename += ".ogg";
+                    }
+
                     buffer = recorder.getBuffer();
                     buffer.saveToFile(filename); // Supports .wav, .ogg (not .mp3)
                     std::cout << "Recording saved as '" << filename << "'." << std::endl;
