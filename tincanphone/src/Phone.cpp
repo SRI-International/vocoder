@@ -186,6 +186,7 @@ void Phone::startup()
 	state = HUNGUP;
 	log << "Ready! Your IP address is: " << router->getWanAddress() << portstr << endl;
 	std::cout << "Ready! Your IP address is: " << router->getWanAddress() << portstr << endl;
+	log << "The bitrate is set to: " << bitrate << " bits/sec" << endl;
 }
 
 bool Phone::run()
@@ -455,7 +456,7 @@ void Phone::goLive()
 
 	/*** MODIFYING THE ENCODER FOR LIGHTER PACKETS ***/
 	// MODIFICATION: Set bitrate to 8000 kbit/s
-	opusErr = opus_encoder_ctl(encoder, OPUS_SET_BITRATE(16000));
+	opusErr = opus_encoder_ctl(encoder, OPUS_SET_BITRATE(bitrate));
 	if (opusErr != OPUS_OK) {
 		throw std::runtime_error(string("opus set bitrate error: ") + opus_strerror(opusErr));
 	}

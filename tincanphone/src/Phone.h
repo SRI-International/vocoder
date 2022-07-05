@@ -140,6 +140,8 @@ protected:
 	OpusDecoder* decoder;
 	PaStream*    stream;
 
+	int          bitrate = 8000;
+
 	opus_int16   silence[PACKET_SAMPLES];
 	opus_int16   ringToneIn[PACKET_SAMPLES];
 	opus_int16   ringToneOut[PACKET_SAMPLES];
