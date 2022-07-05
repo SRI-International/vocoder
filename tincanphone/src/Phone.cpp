@@ -342,6 +342,14 @@ bool Phone::run()
 		{
 			// The 'frames' param of Pa_ReadStream should match 'framesPerBuffer' param of Pa_OpenStream
 			opus_int16 microphone[PACKET_SAMPLES];
+
+			// Print out original microphone data
+			std::cout << "Original mic data: [";
+			for (int i = 0; i < PACKET_SAMPLES; ++i) {
+				std::cout << (int) microphone[i] << " ";
+			}
+			std::cout << "]"<< endl;
+
 			PaError paErr = Pa_ReadStream(stream, microphone, PACKET_SAMPLES);
 			if (paErr && paErr != paInputOverflowed)
 				throw std::runtime_error(string("Pa_ReadStream error: ") + Pa_GetErrorText(paErr));
@@ -357,17 +365,16 @@ bool Phone::run()
 			if (enc < 0)
 				throw std::runtime_error(string("opus_encode error: ") + opus_strerror(enc));
 			
+			// How many bytes are being sent over the wire (header+index+encoded data)
 			int sendsize = sizeof(packet.header) + sizeof(packet.seq) + enc;
 
 			// Display contents of packet here?
-			std::cout << "Size of Packet (bytes): " << sendsize << endl;
-			std::cout << "Packet Contents ";
-
-			for (int i = 0; i < PACKET_SAMPLES; ++i) {
-				std::cout << (char) sendbuf.data[i] << " ";
+			std::cout << "Size of Sent Packet (bytes): " << sendsize << endl;
+			std::cout << "Audio Packet Data Contents: [";
+			for (int i = 0; i < ENCODED_MAX_BYTES; ++i) {
+				std::cout << (int) sendbuf.data[i] << " ";
 			}
-
-			std::cout << endl;
+			std::cout << "]"<< endl;
 
 			sendPacket((char*)&sendbuf, sendsize, address);
 		}
@@ -448,7 +455,7 @@ void Phone::goLive()
 
 	/*** MODIFYING THE ENCODER FOR LIGHTER PACKETS ***/
 	// MODIFICATION: Set bitrate to 8000 kbit/s
-	opusErr = opus_encoder_ctl(encoder, OPUS_SET_BITRATE(8000));
+	opusErr = opus_encoder_ctl(encoder, OPUS_SET_BITRATE(16000));
 	if (opusErr != OPUS_OK) {
 		throw std::runtime_error(string("opus set bitrate error: ") + opus_strerror(opusErr));
 	}
@@ -488,6 +495,7 @@ void Phone::receivePacket(const Packet& packet, uint packetSize, const sockaddr_
 {
 	switch (packet.header)
 	{
+	// What kind of packet is it?
 	case Packet::RING:
 		if (state == HUNGUP)
 		{
@@ -495,7 +503,7 @@ void Phone::receivePacket(const Packet& packet, uint packetSize, const sockaddr_
 			address = fromAddr;
 			startRinging();
 		}
-		else if (fromAddr == address)
+		else if (fromAddr == address) // If we are dialing ourselves?
 		{
 			if (state == RINGING)
 				ringPacketTimer = 0; //Reset timer
@@ -550,14 +558,19 @@ void Phone::receivePacket(const Packet& packet, uint packetSize, const sockaddr_
 
 void Phone::bufferReceivedAudio(const Packet& packet, uint packetSize)
 {
+	std::cout << "Size of received packet (bytes): " << packetSize << endl;
 	// Discard packet if too small
-	if (packetSize <= offsetof(Packet,data))
+	if (packetSize <= offsetof(Packet,data)) {
+		//std::cout << "Packet too small" << endl;
 		return;
-
+	}
+		
 	// Discard late packets
-	if (packet.seq < audiobuf.front().seq)
+	if (packet.seq < audiobuf.front().seq) {
+		//std::cout << "Packet is late" << endl;
 		return;
-
+	}
+		
 	// Make sure audio buffer is expanded to packet.seq
 	while (audiobuf.back().seq < packet.seq)
 	{
@@ -603,6 +616,15 @@ void Phone::playReceivedAudio()
 	{
 		// Decode a packet from the front of the buffer
 		AudioPacket& front = audiobuf.front();
+
+		// Show the audio data before getting decoded:
+		std::cout << "Audio before decoding: [";
+		for (int i = 0; i < ENCODED_MAX_BYTES; ++i) {
+			std::cout << (int) front.data[i] << " ";
+		}
+		std::cout << "]" << endl;
+
+		// Decode the packet with opus_decode()
 		decodeRet = opus_decode(decoder, front.data, front.datasize, decoded, PACKET_SAMPLES, 0);
 		if (decodeRet == OPUS_INVALID_PACKET)
 		{
@@ -612,6 +634,12 @@ void Phone::playReceivedAudio()
 		}
 		else
 		{
+			// Show the audio data after decoding
+			std::cout << "Audio after decoding: [";
+			for (int i = 0; i < PACKET_SAMPLES; ++i) {
+				std::cout << decoded[i] << " ";
+			}
+			std::cout << "]" << endl;
 			// Successfully played an audio packet
 			missedPackets = 0;
 			disconnectTimer = 0;
