@@ -751,8 +751,9 @@ void Phone::writeAudioStream(void* buffer, ulong samples)
 	PaError paErr = Pa_WriteStream(stream, buffer, samples);
 	if (paErr != paNoError)
 	{
-		if (paErr == paOutputUnderflowed)
-			log << "Pa_WriteStream output underflowed" << endl;
+		if (paErr == paOutputUnderflowed) {
+			//log << "Pa_WriteStream output underflowed" << endl;
+		}
 		else
 			throw std::runtime_error(string("Pa_WriteStream failed: ") + Pa_GetErrorText(paErr));
 	}
