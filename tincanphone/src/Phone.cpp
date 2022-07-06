@@ -57,6 +57,14 @@ Phone::Phone()
 	PaError paErr = Pa_Initialize();
 	if (paErr)
 		throw std::runtime_error(string("Could not start audio. Pa_Initialize error: ") + Pa_GetErrorText(paErr));
+
+	std::cout << "Specify the bitrate for the Opus encoder to use: ";
+	std::cin >> bitrate;
+	log << "Bitrate is now set to " << bitrate << " bits/sec." << endl;
+
+	std::cout << "Specify the complexity for Opus (1-10): ";
+	std::cin >> complexity;
+	log << "Complexity is now set to " << complexity << endl;
 }
 
 Phone::~Phone()
@@ -186,7 +194,7 @@ void Phone::startup()
 	state = HUNGUP;
 	log << "Ready! Your IP address is: " << router->getWanAddress() << portstr << endl;
 	std::cout << "Ready! Your IP address is: " << router->getWanAddress() << portstr << endl;
-	log << "The bitrate is set to: " << bitrate << " bits/sec" << endl;
+	//log << "The bitrate is set to: " << bitrate << " bits/sec" << endl;
 }
 
 bool Phone::run()
@@ -462,7 +470,7 @@ void Phone::goLive()
 	}
 
 	// MODIFICATION: Set complexity to low.
-	opusErr = opus_encoder_ctl(encoder, OPUS_SET_COMPLEXITY(2));
+	opusErr = opus_encoder_ctl(encoder, OPUS_SET_COMPLEXITY(complexity));
 	if (opusErr != OPUS_OK) {
 		throw std::runtime_error(string("opus set complexity error: ") + opus_strerror(opusErr));
 	}
