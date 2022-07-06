@@ -352,12 +352,12 @@ bool Phone::run()
 			// The 'frames' param of Pa_ReadStream should match 'framesPerBuffer' param of Pa_OpenStream
 			opus_int16 microphone[PACKET_SAMPLES];
 
-			// Print out original microphone data
-			std::cout << "Original mic data: [";
-			for (int i = 0; i < PACKET_SAMPLES; ++i) {
-				std::cout << (int) microphone[i] << " ";
-			}
-			std::cout << "]"<< endl;
+			// // Print out original microphone data
+			// std::cout << "Original mic data: [";
+			// for (int i = 0; i < PACKET_SAMPLES; ++i) {
+			// 	std::cout << (int) microphone[i] << " ";
+			// }
+			// std::cout << "]"<< endl;
 
 			PaError paErr = Pa_ReadStream(stream, microphone, PACKET_SAMPLES);
 			if (paErr && paErr != paInputOverflowed)
@@ -379,11 +379,11 @@ bool Phone::run()
 
 			// Display contents of packet here?
 			std::cout << "Size of Sent Packet (bytes): " << sendsize << endl;
-			std::cout << "Audio Packet Data Contents: [";
-			for (int i = 0; i < ENCODED_MAX_BYTES; ++i) {
-				std::cout << (int) sendbuf.data[i] << " ";
-			}
-			std::cout << "]"<< endl;
+			// std::cout << "Audio Packet Data Contents: [";
+			// for (int i = 0; i < ENCODED_MAX_BYTES; ++i) {
+			// 	std::cout << (int) sendbuf.data[i] << " ";
+			// }
+			// std::cout << "]"<< endl;
 
 			sendPacket((char*)&sendbuf, sendsize, address);
 		}
@@ -627,11 +627,11 @@ void Phone::playReceivedAudio()
 		AudioPacket& front = audiobuf.front();
 
 		// Show the audio data before getting decoded:
-		std::cout << "Audio before decoding: [";
-		for (int i = 0; i < ENCODED_MAX_BYTES; ++i) {
-			std::cout << (int) front.data[i] << " ";
-		}
-		std::cout << "]" << endl;
+		// std::cout << "Audio before decoding: [";
+		// for (int i = 0; i < ENCODED_MAX_BYTES; ++i) {
+		// 	std::cout << (int) front.data[i] << " ";
+		// }
+		// std::cout << "]" << endl;
 
 		// Decode the packet with opus_decode()
 		decodeRet = opus_decode(decoder, front.data, front.datasize, decoded, PACKET_SAMPLES, 0);
@@ -644,11 +644,11 @@ void Phone::playReceivedAudio()
 		else
 		{
 			// Show the audio data after decoding
-			std::cout << "Audio after decoding: [";
-			for (int i = 0; i < PACKET_SAMPLES; ++i) {
-				std::cout << decoded[i] << " ";
-			}
-			std::cout << "]" << endl;
+			// std::cout << "Audio after decoding: [";
+			// for (int i = 0; i < PACKET_SAMPLES; ++i) {
+			// 	std::cout << decoded[i] << " ";
+			// }
+			// std::cout << "]" << endl;
 			// Successfully played an audio packet
 			missedPackets = 0;
 			disconnectTimer = 0;
