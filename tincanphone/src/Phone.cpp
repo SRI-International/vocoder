@@ -378,7 +378,7 @@ bool Phone::run()
 			int sendsize = sizeof(packet.header) + sizeof(packet.seq) + enc;
 
 			// Display contents of packet here?
-			std::cout << "Size of Sent Packet (bytes): " << sendsize << endl;
+			std::cout << "Size of sent Packet [" << sendseq - 1 <<  "]: " << sendsize << endl;
 			// std::cout << "Audio Packet Data Contents: [";
 			// for (int i = 0; i < ENCODED_MAX_BYTES; ++i) {
 			// 	std::cout << (int) sendbuf.data[i] << " ";
@@ -567,7 +567,7 @@ void Phone::receivePacket(const Packet& packet, uint packetSize, const sockaddr_
 
 void Phone::bufferReceivedAudio(const Packet& packet, uint packetSize)
 {
-	std::cout << "Size of received packet (bytes): " << packetSize << endl;
+	std::cout << "Size of received packet [" << packet.seq << "] (bytes): " << packetSize << endl;
 	// Discard packet if too small
 	if (packetSize <= offsetof(Packet,data)) {
 		//std::cout << "Packet too small" << endl;
