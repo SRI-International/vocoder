@@ -8,6 +8,49 @@
 
 namespace tincan {
 
+void Phone::start_settings() {
+	log << "************************" << endl;
+	log << "SRI TIN CAN PHONE" << endl;
+	log << "************************" << endl;
+
+	std::cout << "Specify the bitrate for the Opus encoder to use (bits/s): ";
+	std::cin >> bitrate;
+	log << "Bitrate is now set to " << bitrate << " bits/sec." << endl;
+
+	std::cout << "Specify the complexity for Opus encoder (1-10): ";
+	std::cin >> complexity;
+	log << "Complexity is now set to " << complexity << endl;
+
+	int choice;
+	string options = "1. Narrowband (4 kHz passband)\n2. Mediumband (6 kHz)\n3. Wideband (8 kHz)\n4. Super Wideband (12 kHz)\nDefault: 20 kHz";
+	string choice_str;
+	std::cout << options << endl;
+	std::cout << "Specify the max bandwidth: ";
+	std::cin >> choice;
+	switch(choice) {
+		case 1:
+			max_bandwidth = OPUS_BANDWIDTH_NARROWBAND;
+			choice_str = "Narrowband 4 kHz";
+			break;
+		case 2:
+			max_bandwidth = OPUS_BANDWIDTH_MEDIUMBAND;
+			choice_str = "Mediumband 6 kHz";
+			break;
+		case 3:
+			max_bandwidth = OPUS_BANDWIDTH_WIDEBAND;
+			choice_str = "Wideband 8 kHz";
+			break;
+		case 4:
+			max_bandwidth = OPUS_BANDWIDTH_SUPERWIDEBAND;
+			choice_str = "Super Wideband 12 kHz";
+			break;
+		default:
+			max_bandwidth = OPUS_BANDWIDTH_FULLBAND;
+			choice_str = "Fullband 20 kHz";
+	}
+	log << "Max bandwidth set to: " << choice_str << endl;
+}
+
 
 int Phone::mainLoop() throw()
 {
@@ -58,13 +101,7 @@ Phone::Phone()
 	if (paErr)
 		throw std::runtime_error(string("Could not start audio. Pa_Initialize error: ") + Pa_GetErrorText(paErr));
 
-	std::cout << "Specify the bitrate for the Opus encoder to use: ";
-	std::cin >> bitrate;
-	log << "Bitrate is now set to " << bitrate << " bits/sec." << endl;
-
-	std::cout << "Specify the complexity for Opus (1-10): ";
-	std::cin >> complexity;
-	log << "Complexity is now set to " << complexity << endl;
+	start_settings();	
 }
 
 Phone::~Phone()
@@ -192,6 +229,8 @@ void Phone::startup()
 	
 	// Done starting up
 	state = HUNGUP;
+
+	log << "**************************" << endl;
 	log << "Ready! Your IP address is: " << router->getWanAddress() << portstr << endl;
 	std::cout << "Ready! Your IP address is: " << router->getWanAddress() << portstr << endl;
 	//log << "The bitrate is set to: " << bitrate << " bits/sec" << endl;
@@ -277,6 +316,8 @@ bool Phone::run()
 			hangup();
 		
 		return false;
+	} else if (0) {
+		
 	}
 
 
@@ -449,6 +490,8 @@ void Phone::goLive()
 {
 	assert(state != LIVE);
 
+	int ret = system("clear");
+
 	sendseq = 1;
 	audiobuf.resize(1);
 	audiobuf.front().seq = 1;
@@ -468,6 +511,8 @@ void Phone::goLive()
 	if (opusErr != OPUS_OK) {
 		throw std::runtime_error(string("opus set bitrate error: ") + opus_strerror(opusErr));
 	}
+	opus_int32 bitrate_verify;
+	opus_encoder_ctl(encoder, OPUS_GET_BITRATE(&bitrate_verify));
 
 	// MODIFICATION: Set complexity to low.
 	opusErr = opus_encoder_ctl(encoder, OPUS_SET_COMPLEXITY(complexity));
@@ -480,6 +525,11 @@ void Phone::goLive()
 		throw std::runtime_error(string("opus set signal error: ") + opus_strerror(opusErr));
 	}
 
+	opusErr = opus_encoder_ctl(encoder, OPUS_SET_MAX_BANDWIDTH(max_bandwidth));
+	if (opusErr != OPUS_OK) {
+		throw std::runtime_error(string("opus set max bandwidth error: ") + opus_strerror(opusErr));
+	}
+
 	/*** END MODIFICATIONS ***/
 
 	decoder = opus_decoder_create(SAMPLE_RATE, CHANNELS, &opusErr);
@@ -490,6 +540,9 @@ void Phone::goLive()
 	log << "*** Call started" << endl;
 	log << "Sound in : " << Pa_GetDeviceInfo( Pa_GetDefaultInputDevice() )->name << endl;
 	log << "Sound out: " << Pa_GetDeviceInfo( Pa_GetDefaultOutputDevice() )->name << endl;
+
+	log << "*** Settings: " << endl;
+	log << "Bitrate: " << bitrate_verify << endl;
 
 	//std::cout << "*** Call started" << endl;
 	//std::cout << "Sound in : " << Pa_GetDeviceInfo( Pa_GetDefaultInputDevice() )->name << endl;

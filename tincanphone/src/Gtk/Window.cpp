@@ -23,7 +23,7 @@ Window::Window(Phone* phone, GtkApplication* app)
 {
 	gtkwin = gtk_application_window_new(app);
 	//gtk_application_window_set_show_menubar(GTK_APPLICATION_WINDOW(gtkwin), false);
-	gtk_window_set_title(GTK_WINDOW(gtkwin), "Tin Can Phone");
+	gtk_window_set_title(GTK_WINDOW(gtkwin), "SRI Tin Can Phone");
 	gtk_window_set_icon_name(GTK_WINDOW(gtkwin), "call-start");
 	gtk_window_set_position(GTK_WINDOW(gtkwin), GTK_WIN_POS_CENTER);
 	gtk_window_set_default_size(GTK_WINDOW(gtkwin), DEFAULT_W, DEFAULT_H);
@@ -77,7 +77,6 @@ Window::Window(Phone* phone, GtkApplication* app)
 	gtk_container_add(bottom, answerHangup);
 	gtk_widget_set_sensitive(answerHangup, false);
 
-	
 	gtk_widget_show_all(GTK_WIDGET(gtkwin));
 }
 
