@@ -9,6 +9,7 @@
 #include "Socket.h"
 #include <deque>
 #include <iostream>
+#include <string>
 #include <opus/opus.h>
 #include <portaudio.h>
 
@@ -22,7 +23,7 @@ enum Constants {
 	SAMPLE_RATE          = 8000, //The number of 16-bit samples per second
 	PACKET_MS            = 20,   //How long a single packet of samples is (20ms recommended by Opus)
 	PACKET_SAMPLES       = 160,  //Samples per packet (SAMPLE_RATE * PACKET_MS = samples) 8000 * 0.020 = 160
-	ENCODED_MAX_BYTES    = 240,  //Max size of a single packet's data once compressed (capacity of opus_encode buffer) 128, 64, 32
+	ENCODED_MAX_BYTES    = 24,   //Max size of a single packet's data once compressed (capacity of opus_encode buffer) 128, 64, 32
 	BUFFERED_PACKETS_MIN = 2,    //How many packets to build up before we start playing audio
 	BUFFERED_PACKETS_MAX = 5,    //When too many packets have built up and we start skipping them to speed up playback
 	DISCONNNECT_TIMEOUT  = 5000, //How long to wait for valid AUDIO packets before we time out and disconnect
@@ -50,7 +51,9 @@ public:
 		CMD_CALL,   //Send outgoing call to addressIn when HUNGUP or RINGING
 		CMD_ANSWER, //Answer incoming call when RINGING
 		CMD_HANGUP, //End call when LIVE or DIALING
-		CMD_EXIT    //Exit the phone thread
+		CMD_EXIT,    //Exit the phone
+		// NEW: Commnd to set the bitrte of hte program
+		CMD_SETBITRATE
 	};
 
 	// These methods should only be called by the user thread, note that they lock Phone.mutex
@@ -65,6 +68,13 @@ public:
 		Scopelock lock(mutex);
 		commandIn = cmd;
 		addressIn = addr;
+	}
+
+	void setBitrate(Command cmd, const string& bitrate_str = "") 
+	{
+		Scopelock lock(mutex);
+		commandIn = cmd;
+		bitrateIn = bitrate_str;
 	}
 	
 	string readLog()
@@ -99,6 +109,10 @@ protected:
 	State        stateOut;
 	string       logOut;
 	string       errorMessage;
+
+	// New Gtk input variables
+	string       bitrateIn;
+	// END NEW
 
 	// The rest do not have public accessors so no mutex requirement
 
@@ -141,7 +155,7 @@ protected:
 	PaStream*    stream;
 
 	// Move parameters here so they can vary with input.
-	int          bitrate;
+	opus_int32   bitrate;
 	int          complexity;
 	int          max_bandwidth;
 

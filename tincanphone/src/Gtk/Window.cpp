@@ -77,6 +77,36 @@ Window::Window(Phone* phone, GtkApplication* app)
 	gtk_container_add(bottom, answerHangup);
 	gtk_widget_set_sensitive(answerHangup, false);
 
+	/**
+	 * NEW: Further bottom row to configure bitrate on the fly
+	 */
+	GtkContainer *audio_row = GTK_CONTAINER(gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL));
+	gtk_container_add(GTK_CONTAINER(mainbox), GTK_WIDGET(audio_row));
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(audio_row), GTK_BUTTONBOX_START);
+
+	GtkWidget *bitrate_lbl = gtk_label_new("Set Bitrate (bits/s):");
+	gtk_container_add(audio_row, bitrate_lbl);
+
+	bitrate = gtk_entry_new();
+	gtk_container_add(audio_row, bitrate);
+	g_signal_connect(bitrate, "activate", G_CALLBACK(Window::onSetBitrateSignal), this);
+	gtk_widget_set_sensitive(bitrate, false);
+
+	setBitrate = gtk_button_new_with_label("Set Bitrate");
+	g_signal_connect(setBitrate, "clicked", G_CALLBACK(Window::onSetBitrateSignal), this);
+	gtk_container_add(audio_row, setBitrate);
+	gtk_widget_set_sensitive(setBitrate, false);
+
+	// Configure Opus Encoder complexity on the fly
+	GtkContainer *complexity_row = GTK_CONTAINER(gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL));
+	gtk_container_add(GTK_CONTAINER(mainbox), GTK_WIDGET(complexity_row));
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(complexity_row), GTK_BUTTONBOX_START);
+
+	GtkWidget *complexity_lbl = gtk_label_new("Set Complexity (0-10):");
+	gtk_container_add(complexity_row, complexity_lbl);
+
+	// END NEW
+
 	gtk_widget_show_all(GTK_WIDGET(gtkwin));
 }
 
@@ -99,6 +129,10 @@ void Window::onUpdate()
 		gtk_widget_grab_focus(addr);
 		gtk_widget_set_sensitive(call, true);
 		gtk_widget_set_sensitive(answerHangup, false);
+		// NEW Bitrate Set
+		gtk_widget_set_sensitive(bitrate, false);
+		gtk_widget_set_sensitive(setBitrate, false);
+		// END NEW
 		break;
 	
 	case Phone::DIALING:
@@ -121,6 +155,10 @@ void Window::onUpdate()
 		gtk_widget_set_sensitive(addr, false);
 		gtk_widget_set_sensitive(call, false);
 		gtk_widget_set_sensitive(answerHangup, true);
+		// NEW Bitrate Set
+		gtk_widget_set_sensitive(bitrate, true);
+		gtk_widget_set_sensitive(setBitrate, true);
+		// END NEW
 		gtk_button_set_label(GTK_BUTTON(answerHangup), "Hang up");
 		gtk_widget_grab_focus(answerHangup);
 		break;
@@ -172,6 +210,14 @@ void Window::onCallSignal(GtkWidget*, gpointer windowVoid)
 	Window* window = reinterpret_cast<Window*>(windowVoid);
 	window->phone->setCommand(Phone::CMD_CALL, gtk_entry_get_text(GTK_ENTRY(window->addr)));
 }
+
+// NEW
+void Window::onSetBitrateSignal(GtkWidget*, gpointer windowVoid)
+{
+	Window* window = reinterpret_cast<Window*>(windowVoid);
+	window->phone->setBitrate(Phone::CMD_SETBITRATE, gtk_entry_get_text(GTK_ENTRY(window->bitrate)));
+}
+// END NEW
 
 void Window::onAnswerOrHangupSignal(GtkWidget*, gpointer windowVoid)
 {

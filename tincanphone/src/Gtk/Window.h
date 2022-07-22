@@ -24,7 +24,7 @@ protected:
 		LOG_MAX_LINES  = 250,
 
 		DEFAULT_W    = 600,
-		DEFAULT_H    = 350,
+		DEFAULT_H    = 400,
 		MARGIN       = 10,
 		SPACE        = 5
 	};
@@ -57,6 +57,10 @@ protected:
 	void updateLog();
 	
 	static void onCallSignal(GtkWidget*, gpointer windowVoid);
+
+	// NEW: Set bitrate function
+	static void onSetBitrateSignal(GtkWidget*, gpointer windowVoid);
+	// END NEW
 	
 	static void onAnswerOrHangupSignal(GtkWidget*, gpointer windowVoid);
 
@@ -68,6 +72,11 @@ protected:
 	GtkWidget*      addr;
 	GtkWidget*      call;
 	GtkWidget*      answerHangup;
+
+	// New Widgets:
+	GtkWidget*      bitrate;
+	GtkWidget*      setBitrate;
+	// END NEW
 };
 
 

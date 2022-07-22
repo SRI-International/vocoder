@@ -1,5 +1,5 @@
 CXX      = g++
-TARGET   = main
+TARGET   = tincanphone
 CFLAGS   = -g -DMINIUPNP_STATICLIB -DNDEBUG -s -O2
 CXXFLAGS = -g -Wall -fmessage-length=0 -DMINIUPNP_STATICLIB -DNDEBUG -s -O2
 LINKS    = `pkg-config --cflags --libs gtk+-3.0 opus portaudio-2.0`

@@ -49,6 +49,7 @@ void Phone::start_settings() {
 			choice_str = "Fullband 20 kHz";
 	}
 	log << "Max bandwidth set to: " << choice_str << endl;
+	log << "************************" << endl;
 }
 
 
@@ -289,7 +290,7 @@ bool Phone::run()
 			else
 			{
 				log << "Invalid IP address" << endl;
-				std::cout << "Invalid IP address" << endl;
+				//std::cout << "Invalid IP address" << endl;
 				command = CMD_NONE; //Cancel command since input invalid
 			}
 
@@ -316,7 +317,25 @@ bool Phone::run()
 			hangup();
 		
 		return false;
-	} else if (0) {
+	} 
+	else if (command == CMD_SETBITRATE)
+	{
+		log << "Button hit! " << bitrateIn << endl;
+		if (state == LIVE) 
+		{
+			int opusErr;
+			int new_bitrate = stoi(bitrateIn);
+			bitrate = new_bitrate;
+			if (encoder) {
+				opusErr = opus_encoder_ctl(encoder, OPUS_SET_BITRATE(bitrate));
+				if (opusErr != OPUS_OK) {
+					throw std::runtime_error(string("opus set bitrate error: ") + opus_strerror(opusErr));
+				}
+				log << "Set new Opus encoder bitrate to " << new_bitrate << " bits/s" << endl;
+			}
+		}
+	}
+	else if (0) {
 		
 	}
 
@@ -419,7 +438,7 @@ bool Phone::run()
 			int sendsize = sizeof(packet.header) + sizeof(packet.seq) + enc;
 
 			// Display contents of packet here?
-			std::cout << "Size of sent Packet [" << sendseq - 1 <<  "]: " << sendsize << endl;
+			std::cout << "Size of sent Packet [" << sendseq - 1 <<  "] (total:payload): " << sendsize << " : "<< enc << endl;
 			// std::cout << "Audio Packet Data Contents: [";
 			// for (int i = 0; i < ENCODED_MAX_BYTES; ++i) {
 			// 	std::cout << (int) sendbuf.data[i] << " ";
@@ -479,7 +498,7 @@ void Phone::startRinging()
 {
 	assert(state != RINGING);
 	log << "*** Incoming call from " << address << endl;
-	std::cout << "*** Incoming call from " << address << endl;
+	//std::cout << "*** Incoming call from " << address << endl;
 	ringToneTimer = 0;
 	ringPacketTimer = 0;
 	state = RINGING;
@@ -490,7 +509,7 @@ void Phone::goLive()
 {
 	assert(state != LIVE);
 
-	int ret = system("clear");
+	//int ret = system("clear");
 
 	sendseq = 1;
 	audiobuf.resize(1);
