@@ -320,7 +320,7 @@ bool Phone::run()
 	} 
 	else if (command == CMD_SETBITRATE)
 	{
-		log << "Button hit! " << bitrateIn << endl;
+		//log << "Button hit! " << bitrateIn << endl;
 		if (state == LIVE) 
 		{
 			int opusErr;
@@ -332,6 +332,23 @@ bool Phone::run()
 					throw std::runtime_error(string("opus set bitrate error: ") + opus_strerror(opusErr));
 				}
 				log << "Set new Opus encoder bitrate to " << new_bitrate << " bits/s" << endl;
+			}
+		}
+	}
+	else if (command == CMD_SETCOMPLEX) 
+	{
+		//log << "Complexity button hit!" << endl;
+		if (state == LIVE)
+		{
+			int opusErr;
+			int new_complexity = stoi(complexityIn);
+			complexity = new_complexity;
+			if (encoder) {
+				opusErr = opus_encoder_ctl(encoder, OPUS_SET_COMPLEXITY(complexity));
+				if (opusErr != OPUS_OK) {
+					throw std::runtime_error(string("opus set complexity error: ") + opus_strerror(opusErr));
+				}
+				log << "Set new Opus complexity level to " << new_complexity << endl;
 			}
 		}
 	}

@@ -53,7 +53,8 @@ public:
 		CMD_HANGUP, //End call when LIVE or DIALING
 		CMD_EXIT,    //Exit the phone
 		// NEW: Commnd to set the bitrte of hte program
-		CMD_SETBITRATE
+		CMD_SETBITRATE,
+		CMD_SETCOMPLEX
 	};
 
 	// These methods should only be called by the user thread, note that they lock Phone.mutex
@@ -75,6 +76,13 @@ public:
 		Scopelock lock(mutex);
 		commandIn = cmd;
 		bitrateIn = bitrate_str;
+	}
+
+	void setComplexity(Command cmd, const string& bitrate_str = "")
+	{
+		Scopelock lock(mutex);
+		commandIn = cmd;
+		complexityIn = bitrate_str;
 	}
 	
 	string readLog()
@@ -112,6 +120,8 @@ protected:
 
 	// New Gtk input variables
 	string       bitrateIn;
+	string       complexityIn;
+	bool         consoleDebugActive;
 	// END NEW
 
 	// The rest do not have public accessors so no mutex requirement

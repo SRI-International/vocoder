@@ -105,6 +105,16 @@ Window::Window(Phone* phone, GtkApplication* app)
 	GtkWidget *complexity_lbl = gtk_label_new("Set Complexity (0-10):");
 	gtk_container_add(complexity_row, complexity_lbl);
 
+	complexity = gtk_entry_new();
+	gtk_container_add(complexity_row, complexity);
+	g_signal_connect(complexity, "activate", G_CALLBACK(Window::onSetComplexitySignal), this);
+	gtk_widget_set_sensitive(complexity, false);
+
+	setComplexity = gtk_button_new_with_label("Set Complexity");
+	g_signal_connect(setComplexity, "clicked", G_CALLBACK(Window::onSetComplexitySignal), this);
+	gtk_container_add(complexity_row, setComplexity);
+	gtk_widget_set_sensitive(setComplexity, false);
+
 	// END NEW
 
 	gtk_widget_show_all(GTK_WIDGET(gtkwin));
@@ -132,6 +142,8 @@ void Window::onUpdate()
 		// NEW Bitrate Set
 		gtk_widget_set_sensitive(bitrate, false);
 		gtk_widget_set_sensitive(setBitrate, false);
+		gtk_widget_set_sensitive(complexity, false);
+		gtk_widget_set_sensitive(setComplexity, false);
 		// END NEW
 		break;
 	
@@ -158,6 +170,8 @@ void Window::onUpdate()
 		// NEW Bitrate Set
 		gtk_widget_set_sensitive(bitrate, true);
 		gtk_widget_set_sensitive(setBitrate, true);
+		gtk_widget_set_sensitive(complexity, true);
+		gtk_widget_set_sensitive(setComplexity, true);
 		// END NEW
 		gtk_button_set_label(GTK_BUTTON(answerHangup), "Hang up");
 		gtk_widget_grab_focus(answerHangup);
@@ -216,6 +230,12 @@ void Window::onSetBitrateSignal(GtkWidget*, gpointer windowVoid)
 {
 	Window* window = reinterpret_cast<Window*>(windowVoid);
 	window->phone->setBitrate(Phone::CMD_SETBITRATE, gtk_entry_get_text(GTK_ENTRY(window->bitrate)));
+}
+
+void Window::onSetComplexitySignal(GtkWidget*, gpointer windowVoid)
+{
+	Window* window = reinterpret_cast<Window*>(windowVoid);
+	window->phone->setComplexity(Phone::CMD_SETCOMPLEX, gtk_entry_get_text(GTK_ENTRY(window->complexity)));	
 }
 // END NEW
 
