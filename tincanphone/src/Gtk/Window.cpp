@@ -115,6 +115,21 @@ Window::Window(Phone* phone, GtkApplication* app)
 	gtk_container_add(complexity_row, setComplexity);
 	gtk_widget_set_sensitive(setComplexity, false);
 
+	// TODO: Set the bandwidth
+
+	// Turn the console debugging stuff on or off
+	GtkContainer *debug_row = GTK_CONTAINER(gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL));
+	gtk_container_add(GTK_CONTAINER(mainbox), GTK_WIDGET(debug_row));
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(debug_row), GTK_BUTTONBOX_START);
+
+	GtkWidget *debug_lbl = gtk_label_new("Toggle Console Debug:");
+	gtk_container_add(debug_row, debug_lbl);
+
+	debug = gtk_button_new_with_label("Console Debug OFF");
+	g_signal_connect(debug, "clicked", G_CALLBACK(Window::onDebugSignal), this);
+	gtk_container_add(debug_row, debug);
+	gtk_widget_set_sensitive(debug, true);
+
 	// END NEW
 
 	gtk_widget_show_all(GTK_WIDGET(gtkwin));
@@ -129,6 +144,12 @@ Window::~Window()
 
 void Window::onUpdate()
 {
+	if (!phone->getDebugStatus()) {
+		gtk_button_set_label(GTK_BUTTON(debug), "Console Debug OFF");
+	} else {
+		gtk_button_set_label(GTK_BUTTON(debug), "Console Debug ON");
+	}
+
 	switch (phone->getState())
 	{
 	case Phone::STARTING:
@@ -236,6 +257,12 @@ void Window::onSetComplexitySignal(GtkWidget*, gpointer windowVoid)
 {
 	Window* window = reinterpret_cast<Window*>(windowVoid);
 	window->phone->setComplexity(Phone::CMD_SETCOMPLEX, gtk_entry_get_text(GTK_ENTRY(window->complexity)));	
+}
+
+void Window::onDebugSignal(GtkWidget*, gpointer windowVoid)
+{
+	Window* window = reinterpret_cast<Window*>(windowVoid);
+	window->phone->setDebug(Phone::CMD_DEBUG);
 }
 // END NEW
 

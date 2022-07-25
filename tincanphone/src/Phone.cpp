@@ -231,7 +231,7 @@ void Phone::startup()
 	// Done starting up
 	state = HUNGUP;
 
-	log << "**************************" << endl;
+	//log << "**************************" << endl;
 	log << "Ready! Your IP address is: " << router->getWanAddress() << portstr << endl;
 	std::cout << "Ready! Your IP address is: " << router->getWanAddress() << portstr << endl;
 	//log << "The bitrate is set to: " << bitrate << " bits/sec" << endl;
@@ -352,6 +352,16 @@ bool Phone::run()
 			}
 		}
 	}
+	else if (command == CMD_DEBUG) 
+	{
+		if (!consoleDebugActive) {
+			log << "Debug is on" << endl;
+			consoleDebugActive = !consoleDebugActive;
+		} else {
+			log << "Debug is off" << endl;
+			consoleDebugActive = !consoleDebugActive;
+		}
+	}
 	else if (0) {
 		
 	}
@@ -455,7 +465,8 @@ bool Phone::run()
 			int sendsize = sizeof(packet.header) + sizeof(packet.seq) + enc;
 
 			// Display contents of packet here?
-			std::cout << "Size of sent Packet [" << sendseq - 1 <<  "] (total:payload): " << sendsize << " : "<< enc << endl;
+			if (consoleDebugActive)
+				std::cout << "Size of sent Packet [" << sendseq - 1 <<  "] (total:payload): " << sendsize << " : "<< enc << endl;
 			// std::cout << "Audio Packet Data Contents: [";
 			// for (int i = 0; i < ENCODED_MAX_BYTES; ++i) {
 			// 	std::cout << (int) sendbuf.data[i] << " ";
@@ -656,7 +667,8 @@ void Phone::receivePacket(const Packet& packet, uint packetSize, const sockaddr_
 
 void Phone::bufferReceivedAudio(const Packet& packet, uint packetSize)
 {
-	std::cout << "Size of received packet [" << packet.seq << "] (bytes): " << packetSize << endl;
+	if (consoleDebugActive)
+		std::cout << "Size of received packet [" << packet.seq << "] (bytes): " << packetSize << endl;
 	// Discard packet if too small
 	if (packetSize <= offsetof(Packet,data)) {
 		//std::cout << "Packet too small" << endl;

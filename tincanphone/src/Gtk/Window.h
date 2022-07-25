@@ -61,6 +61,7 @@ protected:
 	// NEW: Set bitrate function
 	static void onSetBitrateSignal(GtkWidget*, gpointer windowVoid);
 	static void onSetComplexitySignal(GtkWidget*, gpointer windowVoid);
+	static void onDebugSignal(GtkWidget*, gpointer windowVoid);
 	// END NEW
 	
 	static void onAnswerOrHangupSignal(GtkWidget*, gpointer windowVoid);
@@ -80,6 +81,8 @@ protected:
 
 	GtkWidget*      complexity;
 	GtkWidget*      setComplexity;
+
+	GtkWidget*      debug;
 	// END NEW
 };
 

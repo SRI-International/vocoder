@@ -54,7 +54,8 @@ public:
 		CMD_EXIT,    //Exit the phone
 		// NEW: Commnd to set the bitrte of hte program
 		CMD_SETBITRATE,
-		CMD_SETCOMPLEX
+		CMD_SETCOMPLEX,
+		CMD_DEBUG
 	};
 
 	// These methods should only be called by the user thread, note that they lock Phone.mutex
@@ -84,6 +85,13 @@ public:
 		commandIn = cmd;
 		complexityIn = bitrate_str;
 	}
+
+	void setDebug(Command cmd)
+	{
+		Scopelock lock(mutex);
+		commandIn = cmd;
+		//consoleDebugActive = !consoleDebugActive;
+	}
 	
 	string readLog()
 	{
@@ -104,6 +112,11 @@ public:
 
 	// These are called before/after the Phone.mainLoop thread runs
 	void setUpdateHandler(UpdateHandler* handler)  {updateHandler = handler;}
+
+	bool getDebugStatus()
+	{
+		return consoleDebugActive;
+	}
 	
 	Phone();
 	~Phone();
@@ -121,7 +134,7 @@ protected:
 	// New Gtk input variables
 	string       bitrateIn;
 	string       complexityIn;
-	bool         consoleDebugActive;
+	bool         consoleDebugActive = false;
 	// END NEW
 
 	// The rest do not have public accessors so no mutex requirement
