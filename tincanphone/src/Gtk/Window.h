@@ -23,8 +23,8 @@ protected:
 		LOG_UPDATE_MS  = 150,  //How often to pull log messages out of the Phone thread
 		LOG_MAX_LINES  = 250,
 
-		DEFAULT_W    = 600,
-		DEFAULT_H    = 400,
+		DEFAULT_W    = 650,
+		DEFAULT_H    = 500,
 		MARGIN       = 10,
 		SPACE        = 5
 	};
@@ -62,6 +62,12 @@ protected:
 	static void onSetBitrateSignal(GtkWidget*, gpointer windowVoid);
 	static void onSetComplexitySignal(GtkWidget*, gpointer windowVoid);
 	static void onDebugSignal(GtkWidget*, gpointer windowVoid);
+	static void onPassbandSignal1(GtkWidget*, gpointer windowVoid);
+	static void onPassbandSignal2(GtkWidget*, gpointer windowVoid);
+	static void onPassbandSignal3(GtkWidget*, gpointer windowVoid);
+	static void onPassbandSignal4(GtkWidget*, gpointer windowVoid);
+	static void onPassbandSignal5(GtkWidget*, gpointer windowVoid);
+
 	// END NEW
 	
 	static void onAnswerOrHangupSignal(GtkWidget*, gpointer windowVoid);
@@ -81,6 +87,12 @@ protected:
 
 	GtkWidget*      complexity;
 	GtkWidget*      setComplexity;
+
+	GtkWidget*      narrowband;
+	GtkWidget*      mediumband;
+	GtkWidget*      wideband;
+	GtkWidget*      super_wideband;
+	GtkWidget*      fullband;
 
 	GtkWidget*      debug;
 	// END NEW

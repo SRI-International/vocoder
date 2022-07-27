@@ -13,19 +13,25 @@ void Phone::start_settings() {
 	log << "SRI TIN CAN PHONE" << endl;
 	log << "************************" << endl;
 
-	std::cout << "Specify the bitrate for the Opus encoder to use (bits/s): ";
+	std::cout << "************************" << endl;
+	std::cout << "SRI TIN CAN PHONE" << endl;
+	std::cout << "Startup Settings" << endl;
+	std::cout << "************************" << endl;
+	std::cout << "Specify the bitrate for the Opus encoder (bits/s): ";
 	std::cin >> bitrate;
 	log << "Bitrate is now set to " << bitrate << " bits/sec." << endl;
 
-	std::cout << "Specify the complexity for Opus encoder (1-10): ";
+	std::cout << "Specify the complexity for Opus encoder    (1-10): ";
 	std::cin >> complexity;
 	log << "Complexity is now set to " << complexity << endl;
 
 	int choice;
 	string options = "1. Narrowband (4 kHz passband)\n2. Mediumband (6 kHz)\n3. Wideband (8 kHz)\n4. Super Wideband (12 kHz)\nDefault: 20 kHz";
 	string choice_str;
+	std::cout << "--------------------" << endl;
 	std::cout << options << endl;
-	std::cout << "Specify the max bandwidth: ";
+	std::cout << "--------------------" << endl;
+	std::cout << "Specify the max bandwidth (1-4): ";
 	std::cin >> choice;
 	switch(choice) {
 		case 1:
@@ -233,7 +239,8 @@ void Phone::startup()
 
 	//log << "**************************" << endl;
 	log << "Ready! Your IP address is: " << router->getWanAddress() << portstr << endl;
-	std::cout << "Ready! Your IP address is: " << router->getWanAddress() << portstr << endl;
+	if (consoleDebugActive)
+		std::cout << "Ready! Your IP address is: " << router->getWanAddress() << portstr << endl;
 	//log << "The bitrate is set to: " << bitrate << " bits/sec" << endl;
 }
 
@@ -360,6 +367,81 @@ bool Phone::run()
 		} else {
 			log << "Debug is off" << endl;
 			consoleDebugActive = !consoleDebugActive;
+		}
+	}
+	else if (command == CMD_4K)
+	{
+		if (state == LIVE)
+		{
+			int opusErr;
+			max_bandwidth = OPUS_BANDWIDTH_NARROWBAND;
+			if (encoder) {
+				opusErr = opus_encoder_ctl(encoder, OPUS_SET_BANDWIDTH(max_bandwidth));
+				if (opusErr != OPUS_OK) {
+					throw std::runtime_error(string("opus set complexity error: ") + opus_strerror(opusErr));
+				}
+				log << "Set new Opus passband to 4kHz Narrowband" << endl;
+			}
+		}
+	}
+	else if (command == CMD_6K)
+	{
+		if (state == LIVE)
+		{
+			int opusErr;
+			max_bandwidth = OPUS_BANDWIDTH_MEDIUMBAND;
+			if (encoder) {
+				opusErr = opus_encoder_ctl(encoder, OPUS_SET_BANDWIDTH(max_bandwidth));
+				if (opusErr != OPUS_OK) {
+					throw std::runtime_error(string("opus set complexity error: ") + opus_strerror(opusErr));
+				}
+				log << "Set new Opus passband to 6kHz Mediumband" << endl;
+			}
+		}
+	}
+	else if (command == CMD_8K)
+	{
+		if (state == LIVE)
+		{
+			int opusErr;
+			max_bandwidth = OPUS_BANDWIDTH_WIDEBAND;
+			if (encoder) {
+				opusErr = opus_encoder_ctl(encoder, OPUS_SET_BANDWIDTH(max_bandwidth));
+				if (opusErr != OPUS_OK) {
+					throw std::runtime_error(string("opus set complexity error: ") + opus_strerror(opusErr));
+				}
+				log << "Set new Opus passband to 8kHz Wideband" << endl;
+			}
+		}
+	}
+	else if (command == CMD_12K)
+	{
+		if (state == LIVE)
+		{
+			int opusErr;
+			max_bandwidth = OPUS_BANDWIDTH_SUPERWIDEBAND;
+			if (encoder) {
+				opusErr = opus_encoder_ctl(encoder, OPUS_SET_BANDWIDTH(max_bandwidth));
+				if (opusErr != OPUS_OK) {
+					throw std::runtime_error(string("opus set complexity error: ") + opus_strerror(opusErr));
+				}
+				log << "Set new Opus passband to 12kHz Super Wideband" << endl;
+			}
+		}
+	}
+	else if (command == CMD_20K)
+	{
+		if (state == LIVE)
+		{
+			int opusErr;
+			max_bandwidth = OPUS_BANDWIDTH_FULLBAND;
+			if (encoder) {
+				opusErr = opus_encoder_ctl(encoder, OPUS_SET_BANDWIDTH(max_bandwidth));
+				if (opusErr != OPUS_OK) {
+					throw std::runtime_error(string("opus set complexity error: ") + opus_strerror(opusErr));
+				}
+				log << "Set new Opus passband to 20kHz Fullband" << endl;
+			}
 		}
 	}
 	else if (0) {
@@ -566,6 +648,8 @@ void Phone::goLive()
 	if (opusErr != OPUS_OK) {
 		throw std::runtime_error(string("opus set complexity error: ") + opus_strerror(opusErr));
 	}
+	int complexity_verify;
+	opus_encoder_ctl(encoder, OPUS_GET_COMPLEXITY(&complexity_verify));
 
 	opusErr = opus_encoder_ctl(encoder, OPUS_SET_SIGNAL(OPUS_SIGNAL_VOICE));
 	if (opusErr != OPUS_OK) {
@@ -590,6 +674,7 @@ void Phone::goLive()
 
 	log << "*** Settings: " << endl;
 	log << "Bitrate: " << bitrate_verify << endl;
+	log << "Complexity: " << complexity_verify << endl;
 
 	//std::cout << "*** Call started" << endl;
 	//std::cout << "Sound in : " << Pa_GetDeviceInfo( Pa_GetDefaultInputDevice() )->name << endl;

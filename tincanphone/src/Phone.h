@@ -55,7 +55,13 @@ public:
 		// NEW: Commnd to set the bitrte of hte program
 		CMD_SETBITRATE,
 		CMD_SETCOMPLEX,
-		CMD_DEBUG
+		CMD_DEBUG,
+		// Passband button commands
+		CMD_4K,
+		CMD_6K,
+		CMD_8K,
+		CMD_12K,
+		CMD_20K
 	};
 
 	// These methods should only be called by the user thread, note that they lock Phone.mutex

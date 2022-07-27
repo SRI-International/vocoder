@@ -78,6 +78,7 @@ Window::Window(Phone* phone, GtkApplication* app)
 	gtk_widget_set_sensitive(answerHangup, false);
 
 	/**
+	 * BEGIN NEW
 	 * NEW: Further bottom row to configure bitrate on the fly
 	 */
 	GtkContainer *audio_row = GTK_CONTAINER(gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL));
@@ -115,7 +116,38 @@ Window::Window(Phone* phone, GtkApplication* app)
 	gtk_container_add(complexity_row, setComplexity);
 	gtk_widget_set_sensitive(setComplexity, false);
 
-	// TODO: Set the bandwidth
+	// TODO: Set the bandwidth/passband filter.
+	GtkContainer *passband_row = GTK_CONTAINER(gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL));
+	gtk_container_add(GTK_CONTAINER(mainbox), GTK_WIDGET(passband_row));
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(passband_row), GTK_BUTTONBOX_START);
+
+	GtkWidget *passband_lbl = gtk_label_new("Set Bandwidth:");
+	gtk_container_add(passband_row, passband_lbl);
+
+	narrowband = gtk_button_new_with_label("4 kHz");
+	g_signal_connect(narrowband, "clicked", G_CALLBACK(Window::onPassbandSignal1), this);
+	gtk_container_add(passband_row, narrowband);
+	gtk_widget_set_sensitive(narrowband, true);
+
+	mediumband = gtk_button_new_with_label("6 kHz");
+	g_signal_connect(mediumband, "clicked", G_CALLBACK(Window::onPassbandSignal2), this);
+	gtk_container_add(passband_row, mediumband);
+	gtk_widget_set_sensitive(mediumband, true);
+
+	wideband = gtk_button_new_with_label("8 kHz");
+	g_signal_connect(wideband, "clicked", G_CALLBACK(Window::onPassbandSignal3), this);
+	gtk_container_add(passband_row, wideband);
+	gtk_widget_set_sensitive(wideband, true);
+
+	super_wideband = gtk_button_new_with_label("12 kHz");
+	g_signal_connect(super_wideband, "clicked", G_CALLBACK(Window::onPassbandSignal4), this);
+	gtk_container_add(passband_row, super_wideband);
+	gtk_widget_set_sensitive(super_wideband, true);
+
+	fullband = gtk_button_new_with_label("20 kHz");
+	g_signal_connect(fullband, "clicked", G_CALLBACK(Window::onPassbandSignal5), this);
+	gtk_container_add(passband_row, fullband);
+	gtk_widget_set_sensitive(fullband, true);
 
 	// Turn the console debugging stuff on or off
 	GtkContainer *debug_row = GTK_CONTAINER(gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL));
@@ -130,7 +162,7 @@ Window::Window(Phone* phone, GtkApplication* app)
 	gtk_container_add(debug_row, debug);
 	gtk_widget_set_sensitive(debug, true);
 
-	// END NEW
+	/** END NEW **/
 
 	gtk_widget_show_all(GTK_WIDGET(gtkwin));
 }
@@ -144,12 +176,6 @@ Window::~Window()
 
 void Window::onUpdate()
 {
-	if (!phone->getDebugStatus()) {
-		gtk_button_set_label(GTK_BUTTON(debug), "Console Debug OFF");
-	} else {
-		gtk_button_set_label(GTK_BUTTON(debug), "Console Debug ON");
-	}
-
 	switch (phone->getState())
 	{
 	case Phone::STARTING:
@@ -165,6 +191,19 @@ void Window::onUpdate()
 		gtk_widget_set_sensitive(setBitrate, false);
 		gtk_widget_set_sensitive(complexity, false);
 		gtk_widget_set_sensitive(setComplexity, false);
+
+		if (!phone->getDebugStatus()) {
+			gtk_button_set_label(GTK_BUTTON(debug), "Console Debug OFF");
+		} else {
+			gtk_button_set_label(GTK_BUTTON(debug), "Console Debug ON");
+		}
+
+		gtk_widget_set_sensitive(narrowband, false);
+		gtk_widget_set_sensitive(mediumband, false);
+		gtk_widget_set_sensitive(wideband, false);
+		gtk_widget_set_sensitive(super_wideband, false);
+		gtk_widget_set_sensitive(fullband, false);
+
 		// END NEW
 		break;
 	
@@ -193,6 +232,19 @@ void Window::onUpdate()
 		gtk_widget_set_sensitive(setBitrate, true);
 		gtk_widget_set_sensitive(complexity, true);
 		gtk_widget_set_sensitive(setComplexity, true);
+
+		if (!phone->getDebugStatus()) {
+			gtk_button_set_label(GTK_BUTTON(debug), "Console Debug OFF");
+		} else {
+			gtk_button_set_label(GTK_BUTTON(debug), "Console Debug ON");
+		}
+
+		gtk_widget_set_sensitive(narrowband, true);
+		gtk_widget_set_sensitive(mediumband, true);
+		gtk_widget_set_sensitive(wideband, true);
+		gtk_widget_set_sensitive(super_wideband, true);
+		gtk_widget_set_sensitive(fullband, true);
+
 		// END NEW
 		gtk_button_set_label(GTK_BUTTON(answerHangup), "Hang up");
 		gtk_widget_grab_focus(answerHangup);
@@ -263,6 +315,36 @@ void Window::onDebugSignal(GtkWidget*, gpointer windowVoid)
 {
 	Window* window = reinterpret_cast<Window*>(windowVoid);
 	window->phone->setDebug(Phone::CMD_DEBUG);
+}
+
+void Window::onPassbandSignal1(GtkWidget*, gpointer windowVoid)
+{
+	Window* window = reinterpret_cast<Window*>(windowVoid);
+	window->phone->setDebug(Phone::CMD_4K);
+}
+
+void Window::onPassbandSignal2(GtkWidget*, gpointer windowVoid)
+{
+	Window* window = reinterpret_cast<Window*>(windowVoid);
+	window->phone->setDebug(Phone::CMD_6K);
+}
+
+void Window::onPassbandSignal3(GtkWidget*, gpointer windowVoid)
+{
+	Window* window = reinterpret_cast<Window*>(windowVoid);
+	window->phone->setDebug(Phone::CMD_8K);
+}
+
+void Window::onPassbandSignal4(GtkWidget*, gpointer windowVoid)
+{
+	Window* window = reinterpret_cast<Window*>(windowVoid);
+	window->phone->setDebug(Phone::CMD_12K);
+}
+
+void Window::onPassbandSignal5(GtkWidget*, gpointer windowVoid)
+{
+	Window* window = reinterpret_cast<Window*>(windowVoid);
+	window->phone->setDebug(Phone::CMD_20K);
 }
 // END NEW
 
