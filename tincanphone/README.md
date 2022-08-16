@@ -36,6 +36,9 @@ Gtk3 is also required on Linux.
 * pkg-config - `sudo apt install pkg-config`
 * libjack - `sudo apt-get install libjack-dev`
 * portaudio - `sudo apt-get install portaudio19-dev`
+* miniupnpc
+    * Unzip the provided zip file with `unzip miniupnpc.zip`
+    * All the files should be placed under src/ after doing this.
 
 ## Installing PortAudio (if portaudio19-dev isn't working)
 PortAudio is an Audio I/O library that is available on all three major operating systems. However,
