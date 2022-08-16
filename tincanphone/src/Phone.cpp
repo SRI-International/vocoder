@@ -139,7 +139,7 @@ void Phone::startup()
 	{
 		Scopelock lock(mutex);
 		logOut += "Starting up, please wait...\n";
-		std::cout << "Starting up, please wait..." << std::endl;
+		//std::cout << "Starting up, please wait..." << std::endl;
 		if (updateHandler)
 			updateHandler->sendUpdate();
 	}
@@ -549,6 +549,8 @@ bool Phone::run()
 			// Display contents of packet here?
 			if (consoleDebugActive)
 				std::cout << "Size of sent Packet [" << sendseq - 1 <<  "] (total:payload): " << sendsize << " : "<< enc << endl;
+			// Displaying contents may be too obstructive to operation, since the 
+			// looping and printing requires some heavy I/O.
 			// std::cout << "Audio Packet Data Contents: [";
 			// for (int i = 0; i < ENCODED_MAX_BYTES; ++i) {
 			// 	std::cout << (int) sendbuf.data[i] << " ";
@@ -672,7 +674,7 @@ void Phone::goLive()
 	log << "Sound in : " << Pa_GetDeviceInfo( Pa_GetDefaultInputDevice() )->name << endl;
 	log << "Sound out: " << Pa_GetDeviceInfo( Pa_GetDefaultOutputDevice() )->name << endl;
 
-	log << "*** Settings: " << endl;
+	log << "*** Settings at Startup: " << endl;
 	log << "Bitrate: " << bitrate_verify << endl;
 	log << "Complexity: " << complexity_verify << endl;
 
