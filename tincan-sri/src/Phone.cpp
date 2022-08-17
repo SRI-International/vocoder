@@ -19,6 +19,7 @@ void Phone::start_settings() {
 	std::cout << "************************" << endl;
 	std::cout << "Specify the bitrate for the Opus encoder (bits/s): ";
 	std::cin >> bitrate;
+
 	log << "Bitrate is now set to " << bitrate << " bits/sec." << endl;
 
 	std::cout << "Specify the complexity for Opus encoder    (1-10): ";

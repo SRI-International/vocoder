@@ -162,6 +162,11 @@ Window::Window(Phone* phone, GtkApplication* app)
 	gtk_container_add(debug_row, debug);
 	gtk_widget_set_sensitive(debug, true);
 
+	GtkWidget *mute_lbl = gtk_label_new("Mute/Unmute Mic:");
+	gtk_container_add(debug_row, mute_lbl);
+
+	mute = gtk_button_new_with_label("Mute/Unmute");
+
 	/** END NEW **/
 
 	gtk_widget_show_all(GTK_WIDGET(gtkwin));

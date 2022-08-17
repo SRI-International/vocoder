@@ -1,5 +1,7 @@
 src/miniupnpc/
 bin/
+tincanphone
+.vscode/
 *.orig
 *.log
 *.ilk

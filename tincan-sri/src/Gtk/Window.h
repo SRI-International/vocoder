@@ -95,6 +95,7 @@ protected:
 	GtkWidget*      fullband;
 
 	GtkWidget*      debug;
+	GtkWidget*      mute;
 	// END NEW
 };
 
