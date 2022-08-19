@@ -1,5 +1,6 @@
 /*
 	(C) 2016 Gary Sinitsin. See LICENSE file (MIT license).
+	Revised 2022 for SRI International research.
 */
 #pragma once
 
@@ -141,6 +142,7 @@ protected:
 	string       bitrateIn;
 	string       complexityIn;
 	bool         consoleDebugActive = false;
+	bool         isMuted = false;
 	// END NEW
 
 	// The rest do not have public accessors so no mutex requirement
@@ -193,7 +195,16 @@ protected:
 	opus_int16   ringToneOut[PACKET_SAMPLES];
 
 	void startup();
+	/**
+	 * Runs once the Phone program starts up.
+	 * 
+	 * Sets default values for the Opus encoder:
+	 * - Bitrate    = 8 kbit/s
+	 * - Complexity = 5
+	 * - Bandwidth  = Fullband 20 kHz
+	 */
 	void start_settings();
+
 	bool run();
 
 	void hangup();

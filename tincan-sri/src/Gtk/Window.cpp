@@ -59,6 +59,7 @@ Window::Window(Phone* phone, GtkApplication* app)
 	gtk_container_add(bottom, label);
 	
 	addr = gtk_entry_new();
+	gtk_entry_set_text(GTK_ENTRY(addr), "127.0.0.1");
 	gtk_container_add(bottom, addr);
 	g_signal_connect(addr, "activate", G_CALLBACK(Window::onCallSignal), this);
 	gtk_widget_set_sensitive(addr, false);
@@ -89,6 +90,7 @@ Window::Window(Phone* phone, GtkApplication* app)
 	gtk_container_add(audio_row, bitrate_lbl);
 
 	bitrate = gtk_entry_new();
+	gtk_entry_set_text(GTK_ENTRY(bitrate), "8000");
 	gtk_container_add(audio_row, bitrate);
 	g_signal_connect(bitrate, "activate", G_CALLBACK(Window::onSetBitrateSignal), this);
 	gtk_widget_set_sensitive(bitrate, false);
@@ -107,6 +109,7 @@ Window::Window(Phone* phone, GtkApplication* app)
 	gtk_container_add(complexity_row, complexity_lbl);
 
 	complexity = gtk_entry_new();
+	gtk_entry_set_text(GTK_ENTRY(complexity), "5");
 	gtk_container_add(complexity_row, complexity);
 	g_signal_connect(complexity, "activate", G_CALLBACK(Window::onSetComplexitySignal), this);
 	gtk_widget_set_sensitive(complexity, false);
@@ -192,10 +195,10 @@ void Window::onUpdate()
 		gtk_widget_set_sensitive(call, true);
 		gtk_widget_set_sensitive(answerHangup, false);
 		// NEW Bitrate Set
-		gtk_widget_set_sensitive(bitrate, false);
-		gtk_widget_set_sensitive(setBitrate, false);
-		gtk_widget_set_sensitive(complexity, false);
-		gtk_widget_set_sensitive(setComplexity, false);
+		gtk_widget_set_sensitive(bitrate, true);
+		gtk_widget_set_sensitive(setBitrate, true);
+		gtk_widget_set_sensitive(complexity, true);
+		gtk_widget_set_sensitive(setComplexity, true);
 
 		if (!phone->getDebugStatus()) {
 			gtk_button_set_label(GTK_BUTTON(debug), "Console Debug OFF");
@@ -203,11 +206,11 @@ void Window::onUpdate()
 			gtk_button_set_label(GTK_BUTTON(debug), "Console Debug ON");
 		}
 
-		gtk_widget_set_sensitive(narrowband, false);
-		gtk_widget_set_sensitive(mediumband, false);
-		gtk_widget_set_sensitive(wideband, false);
-		gtk_widget_set_sensitive(super_wideband, false);
-		gtk_widget_set_sensitive(fullband, false);
+		gtk_widget_set_sensitive(narrowband, true);
+		gtk_widget_set_sensitive(mediumband, true);
+		gtk_widget_set_sensitive(wideband, true);
+		gtk_widget_set_sensitive(super_wideband, true);
+		gtk_widget_set_sensitive(fullband, true);
 
 		// END NEW
 		break;

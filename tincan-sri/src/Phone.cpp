@@ -1,5 +1,6 @@
 /*
 	(C) 2016 Gary Sinitsin. See LICENSE file (MIT license).
+	Revised 2022 for SRI International research.
 */
 #include "Phone.h"
 #include <cmath>
@@ -8,57 +9,32 @@
 
 namespace tincan {
 
-void Phone::start_settings() {
+/* TODO: BEGIN PUBLIC "SET" FUNCTIONS */
+// ****************************************************************************
+// These are the implementations of the public functions originally declared in
+// Phone.h by Gary Sinitsin. This is to help reduce clutter in the header file
+// and implement better coding practice for this project.
+// ****************************************************************************
+
+
+/* END PUBLIC "SET" FUNCTIONS */
+
+void Phone::start_settings() 
+{
 	log << "************************" << endl;
 	log << "SRI TIN CAN PHONE" << endl;
 	log << "************************" << endl;
 
-	std::cout << "************************" << endl;
-	std::cout << "SRI TIN CAN PHONE" << endl;
-	std::cout << "Startup Settings" << endl;
-	std::cout << "************************" << endl;
-	std::cout << "Specify the bitrate for the Opus encoder (bits/s): ";
-	std::cin >> bitrate;
+	bitrate = 8000;
+	log << "Default bitrate is set to: " << bitrate << " bits/sec." << endl;
 
-	log << "Bitrate is now set to " << bitrate << " bits/sec." << endl;
+	complexity = 5;
+	log << "Default complexity is set to: " << complexity << endl;
 
-	std::cout << "Specify the complexity for Opus encoder    (1-10): ";
-	std::cin >> complexity;
-	log << "Complexity is now set to " << complexity << endl;
-
-	int choice;
-	string options = "1. Narrowband (4 kHz passband)\n2. Mediumband (6 kHz)\n3. Wideband (8 kHz)\n4. Super Wideband (12 kHz)\nDefault: 20 kHz";
-	string choice_str;
-	std::cout << "--------------------" << endl;
-	std::cout << options << endl;
-	std::cout << "--------------------" << endl;
-	std::cout << "Specify the max bandwidth (1-4): ";
-	std::cin >> choice;
-	switch(choice) {
-		case 1:
-			max_bandwidth = OPUS_BANDWIDTH_NARROWBAND;
-			choice_str = "Narrowband 4 kHz";
-			break;
-		case 2:
-			max_bandwidth = OPUS_BANDWIDTH_MEDIUMBAND;
-			choice_str = "Mediumband 6 kHz";
-			break;
-		case 3:
-			max_bandwidth = OPUS_BANDWIDTH_WIDEBAND;
-			choice_str = "Wideband 8 kHz";
-			break;
-		case 4:
-			max_bandwidth = OPUS_BANDWIDTH_SUPERWIDEBAND;
-			choice_str = "Super Wideband 12 kHz";
-			break;
-		default:
-			max_bandwidth = OPUS_BANDWIDTH_FULLBAND;
-			choice_str = "Fullband 20 kHz";
-	}
-	log << "Max bandwidth set to: " << choice_str << endl;
+	max_bandwidth = OPUS_BANDWIDTH_FULLBAND;
+	log << "Default max bandwidth is set to: Fullband 20kHz" << endl;
 	log << "************************" << endl;
 }
-
 
 int Phone::mainLoop() throw()
 {
@@ -108,8 +84,6 @@ Phone::Phone()
 	PaError paErr = Pa_Initialize();
 	if (paErr)
 		throw std::runtime_error(string("Could not start audio. Pa_Initialize error: ") + Pa_GetErrorText(paErr));
-
-	start_settings();	
 }
 
 Phone::~Phone()
@@ -137,6 +111,8 @@ Phone::~Phone()
 
 void Phone::startup()
 {
+	start_settings();
+
 	{
 		Scopelock lock(mutex);
 		logOut += "Starting up, please wait...\n";
@@ -224,7 +200,7 @@ void Phone::startup()
 	{
 		// Log error but complete startup
 		log << "*** ERROR: " << ex.what() << ". You may need to forward UDP port " << localPort << " manually." << endl;
-		std::cout << "*** ERROR: " << ex.what() << ". You may need to forward UDP port " << localPort << " manually." << endl;
+		//std::cout << "*** ERROR: " << ex.what() << ". You may need to forward UDP port " << localPort << " manually." << endl;
 		state = HUNGUP;
 		return;
 	}
@@ -329,35 +305,36 @@ bool Phone::run()
 	else if (command == CMD_SETBITRATE)
 	{
 		//log << "Button hit! " << bitrateIn << endl;
-		if (state == LIVE) 
-		{
-			int opusErr;
+		int opusErr;
+		try {
 			int new_bitrate = stoi(bitrateIn);
-			bitrate = new_bitrate;
+
 			if (encoder) {
+				bitrate = new_bitrate;
 				opusErr = opus_encoder_ctl(encoder, OPUS_SET_BITRATE(bitrate));
 				if (opusErr != OPUS_OK) {
 					throw std::runtime_error(string("opus set bitrate error: ") + opus_strerror(opusErr));
 				}
 				log << "Set new Opus encoder bitrate to " << new_bitrate << " bits/s" << endl;
+			} else {
+				bitrate = new_bitrate;
+				log << "Set new Opus encoder bitrate to " << new_bitrate << " bits/s" << endl;
 			}
+		} catch (std::exception& err) {
+			log << "Invalid bitrate" << endl;
 		}
 	}
 	else if (command == CMD_SETCOMPLEX) 
 	{
-		//log << "Complexity button hit!" << endl;
-		if (state == LIVE)
-		{
-			int opusErr;
-			int new_complexity = stoi(complexityIn);
-			complexity = new_complexity;
-			if (encoder) {
-				opusErr = opus_encoder_ctl(encoder, OPUS_SET_COMPLEXITY(complexity));
-				if (opusErr != OPUS_OK) {
-					throw std::runtime_error(string("opus set complexity error: ") + opus_strerror(opusErr));
-				}
-				log << "Set new Opus complexity level to " << new_complexity << endl;
+		int opusErr;
+		int new_complexity = stoi(complexityIn);
+		complexity = new_complexity;
+		if (encoder) {
+			opusErr = opus_encoder_ctl(encoder, OPUS_SET_COMPLEXITY(complexity));
+			if (opusErr != OPUS_OK) {
+				throw std::runtime_error(string("opus set complexity error: ") + opus_strerror(opusErr));
 			}
+			log << "Set new Opus complexity level to " << new_complexity << endl;
 		}
 	}
 	else if (command == CMD_DEBUG) 
