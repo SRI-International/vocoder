@@ -13,6 +13,8 @@ a solution that will link the functionality into a single program for the projec
 or removed as implementation research continues.
 
 ## Contents of Repo
+* `callback_test` : Examination of audio callback functions
+* `opus_py` : Efforts for implementing Opus codec processes in Python
 * `py_downloader/` : YouTube audio downloader script in Python
     * `audio_downloader.py`: Prompts user for a valid YouTube URL and downloads an audio file to
                              the same directory where this script resides.
@@ -25,3 +27,4 @@ or removed as implementation research continues.
     * `compress_samples` : Simple shell script to compress input `.ogg` file into different compression
                            levels. Leverages `ffmpeg` and `opusenc` under the hood.
 * `sfml_voip` : Borrowed code to demonstrate simple VoIP capabilities on SFML (Linux only).
+* `tincan-sri` : SRI adaptation of Gary Sinitsin's Tin Can Phone program, for testing Opus codec at different settings
