@@ -1,6 +1,8 @@
 /*
 	(C) 2016 Gary Sinitsin. See LICENSE file (MIT license).
 	Revised 2022 for SRI International research.
+
+	InSys Intern: Matt Oyales
 */
 #include "Phone.h"
 #include <cmath>
@@ -15,7 +17,6 @@ namespace tincan {
 // Phone.h by Gary Sinitsin. This is to help reduce clutter in the header file
 // and implement better coding practice for this project.
 // ****************************************************************************
-
 
 /* END PUBLIC "SET" FUNCTIONS */
 
