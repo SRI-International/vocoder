@@ -307,6 +307,7 @@ bool Phone::run()
 	{
 		//log << "Button hit! " << bitrateIn << endl;
 		int opusErr;
+		// Code-based method for validating the input of the number.
 		try {
 			int new_bitrate = stoi(bitrateIn);
 
@@ -328,14 +329,18 @@ bool Phone::run()
 	else if (command == CMD_SETCOMPLEX) 
 	{
 		int opusErr;
-		int new_complexity = stoi(complexityIn);
-		complexity = new_complexity;
-		if (encoder) {
-			opusErr = opus_encoder_ctl(encoder, OPUS_SET_COMPLEXITY(complexity));
-			if (opusErr != OPUS_OK) {
-				throw std::runtime_error(string("opus set complexity error: ") + opus_strerror(opusErr));
+		try {
+			int new_complexity = stoi(complexityIn);
+			if (encoder) {
+				complexity = new_complexity;
+				opusErr = opus_encoder_ctl(encoder, OPUS_SET_COMPLEXITY(complexity));
+				if (opusErr != OPUS_OK) {
+					throw std::runtime_error(string("opus set complexity error: ") + opus_strerror(opusErr));
+				}
+				log << "Set new Opus complexity level to " << new_complexity << endl;
 			}
-			log << "Set new Opus complexity level to " << new_complexity << endl;
+		} catch (std::exception& err) {
+			log << "Invalid complexity" << endl;
 		}
 	}
 	else if (command == CMD_DEBUG) 

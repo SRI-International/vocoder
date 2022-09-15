@@ -170,6 +170,16 @@ Window::Window(Phone* phone, GtkApplication* app)
 
 	mute = gtk_button_new_with_label("Mute/Unmute");
 
+	// TEST SPIN BUTTON FOR BITRATE
+	GtkContainer *spinrow = GTK_CONTAINER(gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL));
+	gtk_container_add(GTK_CONTAINER(mainbox), GTK_WIDGET(spinrow));
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(spinrow), GTK_BUTTONBOX_START);
+
+	GtkAdjustment *test = gtk_adjustment_new(0, 0, 10, 1, 2, 0);
+	GtkWidget *spinbutton = gtk_spin_button_new(GTK_ADJUSTMENT(test), 0,0);
+	gtk_spin_button_set_value(GTK_SPIN_BUTTON(spinbutton), 5);
+	gtk_container_add(spinrow, spinbutton);
+
 	/** END NEW **/
 
 	gtk_widget_show_all(GTK_WIDGET(gtkwin));
