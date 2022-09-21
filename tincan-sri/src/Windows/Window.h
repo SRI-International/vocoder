@@ -10,7 +10,7 @@
 #define NOMINMAX
 #include <Windows.h>
 #include <CommCtrl.h> //For SetWindowSubclass
-
+#include "Resource.h"
 namespace tincan {
 
 

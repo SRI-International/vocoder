@@ -7,7 +7,7 @@
 #include <process.h>  //For _beginthreadex
 #include <CommCtrl.h>
 #include <WinSock2.h>
-
+#include "framework.h"
 
 static unsigned __stdcall ThreadMain(void* phone) throw()
 {

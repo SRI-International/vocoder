@@ -23,7 +23,7 @@ void Window::registerClass()
 	wc.hbrBackground = (HBRUSH)(COLOR_3DFACE+1);
 	wc.lpszMenuName  = NULL;
 	wc.lpszClassName = L"tincanphoneWnd";
-	wc.hIcon         = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
+	wc.hIcon         = LoadIcon(hInstance, IDI_APPLICATION);
 	wc.hIconSm       = 0;
 
 	if (!RegisterClassEx(&wc))
