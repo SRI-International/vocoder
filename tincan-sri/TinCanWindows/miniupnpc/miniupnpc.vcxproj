@@ -21,32 +21,32 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{c05244ac-b037-442d-b95e-4fe873635653}</ProjectGuid>
-    <RootNamespace>TinCanWindows</RootNamespace>
+    <ProjectGuid>{c4352640-7e6b-48e8-8bfa-3fb88ccd272c}</ProjectGuid>
+    <RootNamespace>miniupnpc</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -71,18 +71,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <OutDir>../</OutDir>
+    <OutDir>..\..\lib</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>
+      </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -91,35 +93,40 @@
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;MINIUPNP_STATICLIB;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>WIN32;MINIUPNP_STATICLIB;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+      <UseFullPaths>false</UseFullPaths>
+      <PrecompiledHeaderOutputFile />
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>
+      </SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>portaudio.lib;opus.lib;Ws2_32.lib;iphlpapi.lib;Comctl32.lib;miniupnpc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
       <Command>rd /s /q "$(ProjectDir)Release"</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>remove .obj files</Message>
+      <Message>Remove .obj files</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>
+      </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -129,41 +136,52 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>
+      </SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\Mutex.h" />
-    <ClInclude Include="..\src\Phone.h" />
-    <ClInclude Include="..\src\PhoneCommon.h" />
-    <ClInclude Include="..\src\Router.h" />
-    <ClInclude Include="..\src\Socket.h" />
-    <ClInclude Include="..\src\Windows\framework.h" />
-    <ClInclude Include="..\src\Windows\Resource.h" />
-    <ClInclude Include="..\src\Windows\targetver.h" />
-    <ClInclude Include="..\src\Windows\Window.h" />
+    <ClInclude Include="..\..\src\miniupnpc\codelength.h" />
+    <ClInclude Include="..\..\src\miniupnpc\connecthostport.h" />
+    <ClInclude Include="..\..\src\miniupnpc\igd_desc_parse.h" />
+    <ClInclude Include="..\..\src\miniupnpc\minisoap.h" />
+    <ClInclude Include="..\..\src\miniupnpc\minissdpc.h" />
+    <ClInclude Include="..\..\src\miniupnpc\miniupnpc.h" />
+    <ClInclude Include="..\..\src\miniupnpc\miniupnpcstrings.h" />
+    <ClInclude Include="..\..\src\miniupnpc\miniupnpctypes.h" />
+    <ClInclude Include="..\..\src\miniupnpc\miniupnpc_declspec.h" />
+    <ClInclude Include="..\..\src\miniupnpc\miniwget.h" />
+    <ClInclude Include="..\..\src\miniupnpc\minixml.h" />
+    <ClInclude Include="..\..\src\miniupnpc\portlistingparse.h" />
+    <ClInclude Include="..\..\src\miniupnpc\receivedata.h" />
+    <ClInclude Include="..\..\src\miniupnpc\upnpcommands.h" />
+    <ClInclude Include="..\..\src\miniupnpc\upnpdev.h" />
+    <ClInclude Include="..\..\src\miniupnpc\upnperrors.h" />
+    <ClInclude Include="..\..\src\miniupnpc\upnpreplyparse.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\Mutex.cpp" />
-    <ClCompile Include="..\src\Phone.cpp" />
-    <ClCompile Include="..\src\Router.cpp" />
-    <ClCompile Include="..\src\Socket.cpp" />
-    <ClCompile Include="..\src\Windows\Window.cpp" />
-    <ClCompile Include="..\src\Windows\WinMain.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="TinCanWindows.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="small.ico" />
-    <Image Include="TinCanWindows.ico" />
+    <ClCompile Include="..\..\src\miniupnpc\connecthostport.c" />
+    <ClCompile Include="..\..\src\miniupnpc\igd_desc_parse.c" />
+    <ClCompile Include="..\..\src\miniupnpc\minisoap.c" />
+    <ClCompile Include="..\..\src\miniupnpc\minissdpc.c" />
+    <ClCompile Include="..\..\src\miniupnpc\miniupnpc.c" />
+    <ClCompile Include="..\..\src\miniupnpc\miniwget.c" />
+    <ClCompile Include="..\..\src\miniupnpc\minixml.c" />
+    <ClCompile Include="..\..\src\miniupnpc\portlistingparse.c" />
+    <ClCompile Include="..\..\src\miniupnpc\receivedata.c" />
+    <ClCompile Include="..\..\src\miniupnpc\upnpcommands.c" />
+    <ClCompile Include="..\..\src\miniupnpc\upnpdev.c" />
+    <ClCompile Include="..\..\src\miniupnpc\upnperrors.c" />
+    <ClCompile Include="..\..\src\miniupnpc\upnpreplyparse.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
