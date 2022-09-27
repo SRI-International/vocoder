@@ -6,7 +6,7 @@
 
 #include "PhoneCommon.h"
 #include "Mutex.h"
-#include "Router.h"
+//#include "Router.h"
 #include "Socket.h"
 #include <deque>
 #include <iostream>
@@ -29,7 +29,7 @@ enum Constants {
 	BUFFERED_PACKETS_MAX = 5,    //When too many packets have built up and we start skipping them to speed up playback
 	DISCONNNECT_TIMEOUT  = 5000, //How long to wait for valid AUDIO packets before we time out and disconnect
 	RING_PACKET_INTERVAL = 500,  //How often to repeat RING packet
-	UPNP_TIMEOUT_MS      = 8000  //Timeout to use when doing UPnP discovery
+	//UPNP_TIMEOUT_MS      = 8000  //Timeout to use when doing UPnP discovery
 };
 
 
@@ -179,7 +179,7 @@ protected:
 	bool         increaseBuffering;
 	uint         missedPackets;
 
-	Router*      router;
+	//Router*      router;
 	SOCKET       sock;
 	OpusEncoder* encoder;
 	OpusDecoder* decoder;

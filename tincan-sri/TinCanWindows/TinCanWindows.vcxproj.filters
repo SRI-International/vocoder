@@ -18,25 +18,13 @@
     <ClInclude Include="..\src\Windows\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Windows\targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Socket.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Router.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Windows\Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\PhoneCommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Phone.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Windows\framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Mutex.h">
@@ -48,9 +36,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Phone.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Router.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Socket.cpp">

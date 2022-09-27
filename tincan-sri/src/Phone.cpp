@@ -75,7 +75,7 @@ Phone::Phone()
   stateOut(STARTING),
   state(STARTING),
   address(),
-  router(NULL),
+  //router(NULL),
   sock(-1),
   encoder(NULL),
   decoder(NULL),
@@ -104,7 +104,7 @@ Phone::~Phone()
 		Socket::close(sock);
 
 	// Cleanup UPnP
-	delete router;
+	//delete router;
 	
 	// Cleanup portaudio (ignore errors)
 	Pa_Terminate();
@@ -175,7 +175,7 @@ void Phone::startup()
 		}
 	}
 
-
+	/*
 	// Open WAN port via Router
 	uint16 wanPort = PORT_DEFAULT;
 	try
@@ -220,6 +220,8 @@ void Phone::startup()
 	if (consoleDebugActive)
 		std::cout << "Ready! Your IP address is: " << router->getWanAddress() << portstr << endl;
 	//log << "The bitrate is set to: " << bitrate << " bits/sec" << endl;
+	*/
+	state = HUNGUP;
 }
 
 bool Phone::run()
