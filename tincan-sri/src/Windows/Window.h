@@ -1,5 +1,8 @@
 /*
 	(C) 2016 Gary Sinitsin. See LICENSE file (MIT license).
+	Revised 2022 for SRI International research.
+
+	InSys Intern: Amy Huang
 */
 #pragma once
 
@@ -10,7 +13,7 @@
 #define NOMINMAX
 #include <Windows.h>
 #include <CommCtrl.h> //For SetWindowSubclass
-
+#include "Resource.h"
 namespace tincan {
 
 
@@ -37,20 +40,46 @@ protected:
 		IDC_ADDR          = 102,
 		IDC_CALL          = IDOK,
 		IDC_ANSWER_HANGUP = 200,
+
+		/* BEGIN NEW */
+
+		BITRATE_LABEL = 103,
+		COMPLEX_LABEL = 104,
+		BANDWTH_LABEL = 105,
+		DEBUG_LABEL	  = 106, 
+
+		BITRATE_TXT	  = 111,
+
+		IDC_BITRATE		  = 121,
+		IDC_COMPLEX		  = 122,
+		IDC_BANDWTH		  = 123,
+		IDC_DEBUG		  = 124,
+
 		
+		/* END NEW */
+
 		LOG_TIMER_ID   = 1,
 		LOG_UPDATE_MS  = 150,  //How often to pull log messages out of the Phone thread
 		LOG_MAX_SIZE   = 2000, //How many characters to keep in the log text box
 
 		WIN_MIN_W    = 600,
-		WIN_MIN_H    = 350,
+		WIN_MIN_H    = 500,
 		MARGIN       = 10,
 		SPACE        = 5,
 		BUTTON_W     = 100,
 		BUTTON_H     = 25,
 		TEXT_H       = 20,
-		ADDR_LABEL_W = 100,
-		ADDR_W       = 160
+		LABEL_W		 = 150,
+		ADDR_W       = 160,
+		
+		//ROWS FOR CONTROLS (subtracted from the height)
+
+		ADDR_ROW	= (10 * BUTTON_H) - MARGIN,	// address, call, answer etc.
+		BITRATE_ROW = (8 * BUTTON_H) - MARGIN,	// set bitrate 
+		COMPLEX_ROW = (6 * BUTTON_H) - MARGIN,  // set complexity
+		BANDWTH_ROW = (4 * BUTTON_H) - MARGIN,	// set bandwidth
+		DEBUG_ROW	= (2 * BUTTON_H) - MARGIN	// turn on debug console and toggle mute
+
 	};
 
 	static Window* sWindow;
@@ -60,6 +89,12 @@ protected:
 	int    height;
 	HWND   hlog;
 	HWND   haddr;
+
+	/* BEGIN NEW */
+	HWND   hbitrate;
+	HWND   hcomplex;
+	HWND   hbandwth;
+	HWND   hdebug;
 
 	// Implement UpdateHandler
 	void sendUpdate()

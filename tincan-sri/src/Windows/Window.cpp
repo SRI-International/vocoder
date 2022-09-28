@@ -1,5 +1,9 @@
 /*
 	(C) 2016 Gary Sinitsin. See LICENSE file (MIT license).
+	Revised 2022 for SRI International research.
+
+	InSys Intern: Amy Huang
+
 */
 #include "Window.h"
 
@@ -157,7 +161,7 @@ void Window::onCreate()
 	// Create other controls
 	HWND hctl;
 	hctl = CreateWindow(L"STATIC", L"IP address to call:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
-		0, 0, ADDR_LABEL_W, TEXT_H,
+		0, 0, LABEL_W, TEXT_H,
 		handle, (HMENU)IDC_ADDR_LABEL, hInstance, NULL);
 	setupControl(hctl);
 
@@ -176,28 +180,94 @@ void Window::onCreate()
 		handle, (HMENU)IDC_ANSWER_HANGUP, hInstance, NULL);
 	setupControl(hctl);
 
+	/* BEGIN NEW */
+
+	wchar_t labels [4][23] = {
+		L"Set Bitrate (bits/s):",
+		L"Set Complexity (0-10):", 
+		L"Set Bandwidth:", 
+		L"Toggle Console Debug:"
+	};
+
+	HMENU idc_labels [4] = {
+		(HMENU)BITRATE_LABEL, 
+		(HMENU)COMPLEX_LABEL, 
+		(HMENU)BANDWTH_LABEL, 
+		(HMENU)DEBUG_LABEL 
+	};
+
+	// For loop to create new labels
+	for(int i = 0; i < 4; i++){
+		hctl = CreateWindow(L"STATIC", labels[i], WS_VISIBLE | WS_CHILD | SS_RIGHT,
+		0, 0, LABEL_W, TEXT_H,
+		handle, idc_labels[i], hInstance, NULL);
+		setupControl(hctl);
+	}
+
+	// Bitrate
+
+	hbitrate = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", NULL, WS_VISIBLE | WS_CHILD | WS_TABSTOP,
+		0, 0, ADDR_W, TEXT_H,
+		handle, (HMENU)BITRATE_TXT, hInstance, NULL);
+	setupControl(haddr);
+
+	hctl = CreateWindow(L"BUTTON", L"Set", WS_VISIBLE | WS_CHILD | WS_TABSTOP,
+		0, 0, BUTTON_W, BUTTON_H,
+		handle, (HMENU)IDC_BITRATE, hInstance, NULL);
+	setupControl(hctl);
+
+	// Complexity
+
+	// Bandwidth
+
+	// Debug
+
 	onSize();
 }
 
 void Window::onSize()
 {
 	// Fit log in window, leaving space at the bottom for other controls
-	SetWindowPos(hlog, NULL,  1, 1,  width-2, height-MARGIN-BUTTON_H-MARGIN, SWP_NOZORDER);
+	SetWindowPos(hlog, NULL,  2, 2,  width-2, height-MARGIN-(10 * BUTTON_H)-MARGIN, SWP_NOZORDER);
 
 	// Keep bottom controls at bottom
 	const uint nosize = SWP_NOSIZE|SWP_NOZORDER;
 	HWND hctl;
 	hctl = GetDlgItem(handle, IDC_ADDR_LABEL);
-	SetWindowPos(hctl, NULL,  MARGIN, (height-BUTTON_H-MARGIN)+6,  0,0, nosize);
+	SetWindowPos(hctl, NULL,  MARGIN, (height-ADDR_ROW), 0, 0, nosize);
 
 	hctl = GetDlgItem(handle, IDC_ADDR);
-	SetWindowPos(hctl, NULL,  MARGIN+ADDR_LABEL_W+SPACE, (height-BUTTON_H-MARGIN)+3,  0,0, nosize);
+	SetWindowPos(hctl, NULL,  MARGIN+LABEL_W+SPACE, (height-ADDR_ROW), 0, 0, nosize);
 
 	hctl = GetDlgItem(handle, IDC_CALL);
-	SetWindowPos(hctl, NULL,  MARGIN+ADDR_LABEL_W+SPACE+ADDR_W+SPACE, height-BUTTON_H-MARGIN,  0,0, nosize);
+	SetWindowPos(hctl, NULL,  MARGIN+LABEL_W+SPACE+ADDR_W+SPACE, height-ADDR_ROW - 3, 0, 0, nosize);
 
 	hctl = GetDlgItem(handle, IDC_ANSWER_HANGUP);
-	SetWindowPos(hctl, NULL,  MARGIN+ADDR_LABEL_W+SPACE+ADDR_W+SPACE+BUTTON_W+MARGIN, height-BUTTON_H-MARGIN,  0,0, nosize);
+	SetWindowPos(hctl, NULL,  MARGIN+LABEL_W+SPACE+ADDR_W+SPACE+BUTTON_W+MARGIN, height-ADDR_ROW - 3, 0, 0, nosize);
+
+	/* BEGIN NEW */
+
+	// Bitrate
+	hctl = GetDlgItem(handle, BITRATE_LABEL);
+	SetWindowPos(hctl, NULL,  MARGIN, (height - BITRATE_ROW), 0, 0, nosize);
+
+	hctl = GetDlgItem(handle, BITRATE_TXT);
+	SetWindowPos(hctl, NULL, MARGIN + LABEL_W + SPACE, (height - BITRATE_ROW), 0, 0, nosize);
+
+	hctl = GetDlgItem(handle, IDC_BITRATE);
+	SetWindowPos(hctl, NULL,  MARGIN+LABEL_W+SPACE+ADDR_W+SPACE, height-BITRATE_ROW - 3, 0, 0, nosize);
+
+	// Complexity 
+	hctl = GetDlgItem(handle, COMPLEX_LABEL);
+	SetWindowPos(hctl, NULL, MARGIN, (height - COMPLEX_ROW), 0, 0, nosize);
+
+	// Bandwidth
+	hctl = GetDlgItem(handle, BANDWTH_LABEL);
+	SetWindowPos(hctl, NULL, MARGIN, (height - BANDWTH_ROW), 0, 0, nosize);
+
+	// Debug
+	hctl = GetDlgItem(handle, DEBUG_LABEL);
+	SetWindowPos(hctl, NULL, MARGIN, (height - DEBUG_ROW), 0, 0, nosize);
 }
 
 void Window::onUpdate()
@@ -294,6 +364,11 @@ void Window::onCommand(const WORD id)
 			phone->setCommand(Phone::CMD_ANSWER);
 		else
 			phone->setCommand(Phone::CMD_HANGUP);
+	}
+	else if (id == IDC_BITRATE){
+		char bitrateText[256];
+		GetWindowTextA(hbitrate, bitrateText, sizeof(bitrateText));
+		phone->setBitrate(Phone::CMD_SETBITRATE, bitrateText);
 	}
 }
 
