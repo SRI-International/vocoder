@@ -158,69 +158,76 @@ void Window::onCreate()
 	// Subclassing is the simplest way to get the behavior we want - no gray background or weird key/dialog msg handling
 	SetWindowSubclass(hlog, &LogWndProc, 0, 0);
 
-	// Create other controls
+	/* MODIFIED: The controls will be created by for loops*/
+	
 	HWND hctl;
-	hctl = CreateWindow(L"STATIC", L"IP address to call:", WS_VISIBLE | WS_CHILD | SS_RIGHT,
-		0, 0, LABEL_W, TEXT_H,
-		handle, (HMENU)IDC_ADDR_LABEL, hInstance, NULL);
-	setupControl(hctl);
 
+	wchar_t label_names [][23] =
+	{
+		L"IP address to call:", 	L"Set Bitrate (bits/s):",	L"Set Complexity (0-10):",  
+		L"Set Bandwidth:", 			L"Toggle Console Debug:"
+	};
+
+	HMENU labels [] = 
+	{
+		(HMENU)IDC_ADDR_LABEL, 		(HMENU)BITRATE_LABEL, 		(HMENU)COMPLEX_LABEL,  		
+		(HMENU)BANDWTH_LABEL, 		(HMENU)DEBUG_LABEL 
+	};
+
+	wchar_t button_names [][7] =
+	{
+		L"Call", 	L"Answer",		L"Set",		L"Set",
+		L"4 kHz", 	L"6 kHz", 		L"8 kHz", 	L"12 kHz", 
+		L"20 hHz",	L"OFF"
+	};
+
+	HMENU commands [] = 
+	{
+		(HMENU)IDC_CALL, 	(HMENU)IDC_ANSWER_HANGUP,	(HMENU)IDC_BITRATE,	
+		(HMENU)IDC_COMPLEX, (HMENU)IDC_NARROW, 			(HMENU)IDC_MEDIUM, 
+		(HMENU)IDC_WIDE, 	(HMENU)IDC_SUPERWIDE,		(HMENU)IDC_FULL,	
+		(HMENU)IDC_DEBUG
+	};
+
+	// for-loop to make labels
+	for (int i = 0; i < 5; i++)
+	{
+		hctl = CreateWindow(L"STATIC", label_names[i], WS_VISIBLE | WS_CHILD | SS_RIGHT,
+			0, 0, LABEL_W, TEXT_H,
+			handle, labels[i], hInstance, NULL);
+		setupControl(hctl);
+	}
+
+	// for-loop to make buttons
+	for (int i = 0; i < 10; i++)
+	{
+		hctl = CreateWindow(L"BUTTON", button_names[i], WS_VISIBLE | WS_CHILD | WS_TABSTOP,
+			0, 0, BUTTON_W, BUTTON_H,
+			handle, commands[i], hInstance, NULL);
+		setupControl(hctl);
+	}
+
+	// IP Address
 	haddr = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", NULL, WS_VISIBLE | WS_CHILD | WS_TABSTOP | WS_DISABLED,
 		0, 0, ADDR_W, TEXT_H,
 		handle, (HMENU)IDC_ADDR, hInstance, NULL);
 	setupControl(haddr);
+	SetWindowText(GetDlgItem(handle, IDC_ADDR), L"127.0.0.1");
 
-	hctl = CreateWindow(L"BUTTON", L"Call", WS_VISIBLE | WS_CHILD | WS_TABSTOP | WS_DISABLED,
-		0, 0, BUTTON_W, BUTTON_H,
-		handle, (HMENU)IDC_CALL, hInstance, NULL);
-	setupControl(hctl);
-
-	hctl = CreateWindow(L"BUTTON", L"Answer", WS_VISIBLE | WS_CHILD | WS_TABSTOP | WS_DISABLED,
-		0, 0, BUTTON_W, BUTTON_H,
-		handle, (HMENU)IDC_ANSWER_HANGUP, hInstance, NULL);
-	setupControl(hctl);
-
-	/* BEGIN NEW */
-
-	wchar_t labels [4][23] = {
-		L"Set Bitrate (bits/s):",
-		L"Set Complexity (0-10):", 
-		L"Set Bandwidth:", 
-		L"Toggle Console Debug:"
-	};
-
-	HMENU idc_labels [4] = {
-		(HMENU)BITRATE_LABEL, 
-		(HMENU)COMPLEX_LABEL, 
-		(HMENU)BANDWTH_LABEL, 
-		(HMENU)DEBUG_LABEL 
-	};
-
-	// For loop to create new labels
-	for(int i = 0; i < 4; i++){
-		hctl = CreateWindow(L"STATIC", labels[i], WS_VISIBLE | WS_CHILD | SS_RIGHT,
-		0, 0, LABEL_W, TEXT_H,
-		handle, idc_labels[i], hInstance, NULL);
-		setupControl(hctl);
-	}
 
 	// Bitrate
-
 	hbitrate = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", NULL, WS_VISIBLE | WS_CHILD | WS_TABSTOP,
 		0, 0, ADDR_W, TEXT_H,
 		handle, (HMENU)BITRATE_TXT, hInstance, NULL);
-	setupControl(haddr);
+	setupControl(hbitrate);
 
-	hctl = CreateWindow(L"BUTTON", L"Set", WS_VISIBLE | WS_CHILD | WS_TABSTOP,
-		0, 0, BUTTON_W, BUTTON_H,
-		handle, (HMENU)IDC_BITRATE, hInstance, NULL);
-	setupControl(hctl);
 
-	// Complexity
+	// Complexity (Might become an up-down button)
+	hcomplex = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", NULL, WS_VISIBLE | WS_CHILD | WS_TABSTOP,
+		0, 0, ADDR_W, TEXT_H,
+		handle, (HMENU)COMPLEX_TXT, hInstance, NULL);
+	setupControl(hcomplex);
 
-	// Bandwidth
-
-	// Debug
 
 	onSize();
 }
@@ -261,13 +268,32 @@ void Window::onSize()
 	hctl = GetDlgItem(handle, COMPLEX_LABEL);
 	SetWindowPos(hctl, NULL, MARGIN, (height - COMPLEX_ROW), 0, 0, nosize);
 
+	hctl = GetDlgItem(handle, COMPLEX_TXT);
+	SetWindowPos(hctl, NULL, MARGIN + LABEL_W + SPACE, (height - COMPLEX_ROW), 0, 0, nosize);
+
+	hctl = GetDlgItem(handle, IDC_COMPLEX);
+	SetWindowPos(hctl, NULL,  MARGIN+LABEL_W+SPACE+ADDR_W+SPACE, height-COMPLEX_ROW - 3, 0, 0, nosize);
+
 	// Bandwidth
 	hctl = GetDlgItem(handle, BANDWTH_LABEL);
 	SetWindowPos(hctl, NULL, MARGIN, (height - BANDWTH_ROW), 0, 0, nosize);
 
+	int idc_bandwidths[5] = {(int)IDC_NARROW, (int)IDC_MEDIUM, (int)IDC_WIDE, (int)IDC_SUPERWIDE, (int)IDC_FULL};
+
+	for(int i = 0; i < 5; i++)
+	{
+		hctl = GetDlgItem(handle, idc_bandwidths[i]);
+		SetWindowPos(hctl, NULL,  MARGIN+LABEL_W+SPACE+(i * BUTTON_W)+SPACE, height-BANDWTH_ROW - 3, 0, 0, nosize);
+	}
+	
+
 	// Debug
 	hctl = GetDlgItem(handle, DEBUG_LABEL);
 	SetWindowPos(hctl, NULL, MARGIN, (height - DEBUG_ROW), 0, 0, nosize);
+
+	hctl = GetDlgItem(handle, IDC_DEBUG);
+	SetWindowPos(hctl, NULL,  MARGIN+LABEL_W+SPACE+SPACE, height-DEBUG_ROW - 3, 0, 0, nosize);
+
 }
 
 void Window::onUpdate()
@@ -365,11 +391,34 @@ void Window::onCommand(const WORD id)
 		else
 			phone->setCommand(Phone::CMD_HANGUP);
 	}
-	else if (id == IDC_BITRATE){
+	else if (id == IDC_BITRATE)
+	{
 		char bitrateText[256];
 		GetWindowTextA(hbitrate, bitrateText, sizeof(bitrateText));
 		phone->setBitrate(Phone::CMD_SETBITRATE, bitrateText);
 	}
+	else if (id == IDC_COMPLEX)
+	{
+		char complexText[256];
+		GetWindowTextA(hcomplex, complexText, sizeof(complexText));
+		phone->setComplexity(Phone::CMD_SETCOMPLEX, complexText);
+	}
+	else if (id == IDC_NARROW)	 { phone->setDebug(Phone::CMD_4K); }
+	else if (id == IDC_MEDIUM)	 { phone->setDebug(Phone::CMD_6K); }
+	else if (id == IDC_WIDE)  	 { phone->setDebug(Phone::CMD_8K); }
+	else if (id == IDC_SUPERWIDE){ phone->setDebug(Phone::CMD_12K);}
+	else if (id == IDC_FULL)	 { phone->setDebug(Phone::CMD_20K);}
+	else if (id == IDC_DEBUG) 	 
+	{ 
+		phone->setDebug(Phone::CMD_DEBUG);
+
+		if (!phone->getDebugStatus())
+			SetWindowText(GetDlgItem(handle, IDC_DEBUG), L"OFF");
+		else 
+			SetWindowText(GetDlgItem(handle, IDC_DEBUG), L"ON");
+	}
+
+
 }
 
 void Window::destroy()

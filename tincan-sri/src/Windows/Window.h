@@ -49,11 +49,18 @@ protected:
 		DEBUG_LABEL	  = 106, 
 
 		BITRATE_TXT	  = 111,
+		COMPLEX_TXT	  = 112,
 
-		IDC_BITRATE		  = 121,
-		IDC_COMPLEX		  = 122,
-		IDC_BANDWTH		  = 123,
-		IDC_DEBUG		  = 124,
+		IDC_BITRATE	  = 121,
+		IDC_COMPLEX	  = 122,
+
+		IDC_NARROW	  = 123,
+		IDC_MEDIUM	  = 124,
+		IDC_WIDE 	  = 125,
+		IDC_SUPERWIDE = 126,
+		IDC_FULL	  = 127,
+
+		IDC_DEBUG	  = 128,
 
 		
 		/* END NEW */
@@ -66,7 +73,7 @@ protected:
 		WIN_MIN_H    = 500,
 		MARGIN       = 10,
 		SPACE        = 5,
-		BUTTON_W     = 100,
+		BUTTON_W     = 75,
 		BUTTON_H     = 25,
 		TEXT_H       = 20,
 		LABEL_W		 = 150,
