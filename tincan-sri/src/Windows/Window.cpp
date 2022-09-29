@@ -174,11 +174,11 @@ void Window::onCreate()
 		(HMENU)BANDWTH_LABEL, 		(HMENU)DEBUG_LABEL 
 	};
 
-	wchar_t button_names [][7] =
+	wchar_t button_names [][10] =
 	{
 		L"Call", 	L"Answer",		L"Set",		L"Set",
 		L"4 kHz", 	L"6 kHz", 		L"8 kHz", 	L"12 kHz", 
-		L"20 hHz",	L"OFF"
+		L"20 hHz",	L"DEBUG OFF"
 	};
 
 	HMENU commands [] = 
@@ -220,14 +220,14 @@ void Window::onCreate()
 		0, 0, ADDR_W, TEXT_H,
 		handle, (HMENU)BITRATE_TXT, hInstance, NULL);
 	setupControl(hbitrate);
-
+	SetWindowText(GetDlgItem(handle, BITRATE_TXT), L"8000");
 
 	// Complexity (Might become an up-down button)
 	hcomplex = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", NULL, WS_VISIBLE | WS_CHILD | WS_TABSTOP,
 		0, 0, ADDR_W, TEXT_H,
 		handle, (HMENU)COMPLEX_TXT, hInstance, NULL);
 	setupControl(hcomplex);
-
+	SetWindowText(GetDlgItem(handle, COMPLEX_TXT), L"5");
 
 	onSize();
 }
@@ -413,9 +413,9 @@ void Window::onCommand(const WORD id)
 		phone->setDebug(Phone::CMD_DEBUG);
 
 		if (!phone->getDebugStatus())
-			SetWindowText(GetDlgItem(handle, IDC_DEBUG), L"OFF");
+			SetWindowText(GetDlgItem(handle, IDC_DEBUG), L"DEBUG ON");
 		else 
-			SetWindowText(GetDlgItem(handle, IDC_DEBUG), L"ON");
+			SetWindowText(GetDlgItem(handle, IDC_DEBUG), L"DEBUG OFF");
 	}
 
 
